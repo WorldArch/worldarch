@@ -23,33 +23,48 @@
             z-index: 100;
             background: rgba(255, 255, 255, 0.9);
             width: 100%;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #000; /* Added a thin line for that tech look */
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
+            gap: 1px; /* Tighter gap for a seamless look */
             padding-top: 80px;
+            background-color: #000; /* Makes the gaps look like black grid lines */
         }
         .product-wrap {
-            display: flex;
-            flex-direction: column;
-        }
-        .grid-item {
             position: relative;
-            width: 100%;
-            aspect-ratio: 1 / 1;
             overflow: hidden;
+            aspect-ratio: 1 / 1;
             background-color: #f0f0f0;
         }
-        .grid-item img {
+        .product-wrap img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: grayscale(20%); /* Slight desaturation for the aesthetic */
+            transition: filter 0.3s ease;
         }
+        .product-wrap:hover img {
+            filter: grayscale(0%);
+        }
+        /* Refined Hover Label */
         .label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             padding: 12px;
+            background: #000; /* Black label background */
+            color: #fff; /* White text for contrast */
             font-size: 10px;
             letter-spacing: 1px;
+            transform: translateY(100%);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .product-wrap:hover .label {
+            transform: translateY(0);
         }
         @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; }
@@ -64,24 +79,18 @@
 
     <main class="grid">
         <div class="product-wrap">
-            <div class="grid-item">
-                <img src="sm-01.jpg" alt="SM-01">
-            </div>
-            <div class="label">SM-01</div>
+            <img src="sm-01.jpg" alt="SM-01">
+            <div class="label">SM-01 // TECHNICAL SPEC</div>
         </div>
 
         <div class="product-wrap">
-            <div class="grid-item">
-                <img src="ar-01.jpg" alt="AR-01">
-            </div>
-            <div class="label">AR-01</div>
+            <img src="ar-01.jpg" alt="AR-01">
+            <div class="label">AR-01 // ARCHIVE SERIES</div>
         </div>
 
         <div class="product-wrap">
-            <div class="grid-item">
-                <img src="vc-01.jpg" alt="VC-01">
-            </div>
-            <div class="label">VC-01</div>
+            <img src="vc-01.jpg" alt="VC-01">
+            <div class="label">VC-01 // VECTOR CORE</div>
         </div>
     </main>
 
