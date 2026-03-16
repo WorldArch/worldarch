@@ -1,98 +1,128 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>worldarch</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
     <style>
+        /* Base Reset & Styling */
         body {
             margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background-color: #ffffff;
             color: #000000;
-            font-family: 'Space Mono', monospace;
-            text-transform: uppercase;
         }
-        header {
-            padding: 24px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            width: 100%;
-            letter-spacing: 2px;
-            border-bottom: 1px solid #000; /* Added a thin line for that tech look */
-        }
-        .grid {
+
+        /* Seamless Grid Container */
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px; /* Tighter gap for a seamless look */
-            padding-top: 80px;
-            background-color: #000; /* Makes the gaps look like black grid lines */
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 0;
+            width: 100vw;
+            min-height: 100vh;
         }
-        .product-wrap {
+
+        /* Product Container */
+        .product-item {
             position: relative;
             overflow: hidden;
-            aspect-ratio: 1 / 1;
-            background-color: #f0f0f0;
+            cursor: pointer;
+            aspect-ratio: 1 / 1; /* Keeps the grid squares uniform */
         }
-        .product-wrap img {
+
+        /* Image Styling - Default to Grayscale */
+        .product-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(20%); /* Slight desaturation for the aesthetic */
-            transition: filter 0.3s ease;
+            filter: grayscale(100%);
+            transition: filter 0.4s ease;
         }
-        .product-wrap:hover img {
+
+        /* Image Hover - Revert to Color */
+        .product-item:hover .product-image {
             filter: grayscale(0%);
         }
-        /* Refined Hover Label */
-        .label {
+
+        /* Overlay Styling - Hidden by Default */
+        .product-overlay {
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            padding: 12px;
-            background: #000; /* Black label background */
-            color: #fff; /* White text for contrast */
-            font-size: 10px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Overlay Hover - Fade In */
+        .product-item:hover .product-overlay {
+            opacity: 1;
+        }
+
+        /* Typography & Button */
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
             letter-spacing: 1px;
-            transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .product-wrap:hover .label {
-            transform: translateY(0);
+
+        .buy-button {
+            padding: 12px 24px;
+            background-color: #000000;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #000000;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
+
+        .buy-button:hover {
+            background-color: #ffffff;
+            color: #000000;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <strong>WORLD ARCH</strong>
-    </header>
-
-    <main class="grid">
-        <div class="product-wrap">
-            <img src="sm-01.jpg" alt="SM-01">
-            <div class="label">SM-01 // TECHNICAL SPEC</div>
+    <div class="grid-container">
+        
+        <div class="product-item">
+            <img src="sm-01.jpg" alt="Item 01" class="product-image">
+            <div class="product-overlay">
+                <div class="product-title">Item 01</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
         </div>
 
-        <div class="product-wrap">
-            <img src="ar-01.jpg" alt="AR-01">
-            <div class="label">AR-01 // ARCHIVE SERIES</div>
+        <div class="product-item">
+            <img src="sm-02.jpg" alt="Item 02" class="product-image">
+            <div class="product-overlay">
+                <div class="product-title">Item 02</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
         </div>
 
-        <div class="product-wrap">
-            <img src="vc-01.jpg" alt="VC-01">
-            <div class="label">VC-01 // VECTOR CORE</div>
+        <div class="product-item">
+            <img src="sm-03.jpg" alt="Item 03" class="product-image">
+            <div class="product-overlay">
+                <div class="product-title">Item 03</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
         </div>
-    </main>
+
+    </div>
 
 </body>
-</html>
+</html> 
