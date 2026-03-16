@@ -3,16 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WORLD ARCH</title>
+    <title>worldarch</title>
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
-
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -22,7 +14,6 @@
             color: #000000;
             font-family: 'Space Mono', monospace;
             text-transform: uppercase;
-            -webkit-font-smoothing: antialiased;
         }
         header {
             padding: 24px;
@@ -36,7 +27,7 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2px; /* Brutalist minimal gap */
+            gap: 2px;
             padding-top: 80px;
         }
         .product-wrap {
@@ -54,23 +45,45 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .grid-item:hover img {
-            transform: scale(1.05);
         }
         .label {
             padding: 12px;
             font-size: 10px;
             letter-spacing: 1px;
-            text-align: left;
         }
-        /* Responsive: Switches to 1 column on mobile */
         @media (max-width: 768px) {
-            .grid { 
-                grid-template-columns: 1fr; 
-                padding-top: 70px;
-            }
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
+<body>
+
+    <header>
+        <strong>WORLD ARCH</strong>
+    </header>
+
+    <main class="grid">
+        <div class="product-wrap">
+            <div class="grid-item">
+                <img src="sm-01.jpg" alt="SM-01">
+            </div>
+            <div class="label">SM-01</div>
+        </div>
+
+        <div class="product-wrap">
+            <div class="grid-item">
+                <img src="ar-01.jpg" alt="AR-01">
+            </div>
+            <div class="label">AR-01</div>
+        </div>
+
+        <div class="product-wrap">
+            <div class="grid-item">
+                <img src="vc-01.jpg" alt="VC-01">
+            </div>
+            <div class="label">VC-01</div>
+        </div>
+    </main>
+
+</body>
+</html>
