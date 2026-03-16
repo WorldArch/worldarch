@@ -4,81 +4,74 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WORLD ARCH</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             margin: 0;
             background-color: #ffffff;
             color: #000000;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             text-transform: uppercase;
+            -webkit-font-smoothing: antialiased;
         }
         header {
-            padding: 20px;
+            padding: 24px;
             position: fixed;
             top: 0;
             left: 0;
             z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            width: 100%;
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2px; /* Tight industrial spacing */
-            padding-top: 80px; /* Space for header */
+            gap: 2px; /* Brutalist tight gap */
+            padding-top: 80px;
         }
         .grid-item {
             position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
-            background-color: #f0f0f0; /* Placeholder color */
+            background-color: #f9f9f9;
         }
         .grid-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         .grid-item:hover img {
-            transform: scale(1.02); /* The subtle hover effect */
+            transform: scale(1.03);
         }
         .label {
-            padding: 10px;
-            font-size: 12px;
-            text-align: center;
+            padding: 12px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-align: left;
         }
+        /* Mobile adjustment: 1 column on small screens */
         @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; }
+            header { padding: 16px; }
         }
     </style>
 </head>
 <body>
+
     <header>
         <strong>WORLD ARCH</strong>
     </header>
 
     <main class="grid">
-        <div class="product-container">
-            <div class="grid-item">
-                <img src="sm_01.jpg" alt="SM_01">
-            </div>
-            <div class="label">SM_01</div>
-        </div>
-
-        <div class="product-container">
-            <div class="grid-item">
-                <img src="ar_01.jpg" alt="AR_01">
-            </div>
-            <div class="label">AR_01</div>
-        </div>
-
-        <div class="product-container">
-            <div class="grid-item">
-                <img src="vc_01.jpg" alt="VC_01">
-            </div>
-            <div class="label">VC_01</div>
-        </div>
-    </main>
-</body>
-</html>
-
