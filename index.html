@@ -36,15 +36,19 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2px; /* Brutalist tight gap */
+            gap: 2px; /* Brutalist minimal gap */
             padding-top: 80px;
+        }
+        .product-wrap {
+            display: flex;
+            flex-direction: column;
         }
         .grid-item {
             position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
-            background-color: #f9f9f9;
+            background-color: #f0f0f0;
         }
         .grid-item img {
             width: 100%;
@@ -53,7 +57,7 @@
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         .grid-item:hover img {
-            transform: scale(1.03);
+            transform: scale(1.05);
         }
         .label {
             padding: 12px;
@@ -61,17 +65,12 @@
             letter-spacing: 1px;
             text-align: left;
         }
-        /* Mobile adjustment: 1 column on small screens */
+        /* Responsive: Switches to 1 column on mobile */
         @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
-            header { padding: 16px; }
+            .grid { 
+                grid-template-columns: 1fr; 
+                padding-top: 70px;
+            }
         }
     </style>
 </head>
-<body>
-
-    <header>
-        <strong>WORLD ARCH</strong>
-    </header>
-
-    <main class="grid">
