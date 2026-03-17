@@ -1,148 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WorldArch</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 90%;
-            max-width: 1200px;
-        }
-        .product-item {
-            position: relative;
-            overflow: hidden;
-            background: #111;
-        }
-        .product-image {
-            width: 100%;
-            display: block;
-            filter: grayscale(100%);
-            transition: filter 0.4s ease;
-        }
-        .product-item:hover .product-image {
-            filter: grayscale(0%);
-        }
-        .product-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .product-item:hover .product-overlay {
-            opacity: 1;
-        }
-        .buy-button {
-            background: #fff;
-            color: #000;
-            padding: 8px 16px;
-            text-decoration: none;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 12px;
-        }
-    <style>
-  body { 
-    background: #f0f0f0; 
-    font-family: 'IBM Plex Mono', monospace;
-    margin: 0;
-    overflow-x: hidden;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WorldArch | Lookbook</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body { 
+      background: #f0f0f0; /* Industrial Gray */
+      font-family: 'IBM Plex Mono', monospace;
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  .runway-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10vh 0;
-  }
+    .runway-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10vh 0;
+    }
 
-  .look {
-    width: 90%;
-    max-width: 800px;
-    margin-bottom: 150px;
-    position: relative;
-    /* Smooth 'To the Forefront' transition */
-    transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1), z-index 0s;
-    cursor: crosshair;
-    z-index: 1;
-  }
+    .look {
+      width: 90%;
+      max-width: 800px;
+      margin-bottom: 150px;
+      position: relative;
+      /* Smooth 'To the Forefront' transition logic */
+      transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1), z-index 0s;
+      cursor: crosshair;
+      z-index: 1;
+    }
 
-  /* THE TRAIL: Creates the 'after-image' ghosting effect */
-  .look::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #4B9CD3; /* University Blue Base */
-    opacity: 0;
-    transform: translate(0, 0);
-    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-    z-index: -1;
-    filter: blur(8px);
-  }
+    /* THE TRAIL: Creates the 'after-image' ghosting effect */
+    .look::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #4B9CD3; /* University Blue Base */
+      opacity: 0;
+      transform: translate(0, 0);
+      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      z-index: -1;
+      filter: blur(8px);
+    }
 
-  /* THE SUBSTANCE: 4% Smoke + Dense Microscopic Stars */
-  .look::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    /* 4% Smoke Overlay */
-    background-color: rgba(0, 0, 0, 0.04); 
-    /* Dense Star Grain */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.99' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-    opacity: 0.3; /* Adjust density intensity here */
-  }
+    /* THE SUBSTANCE: 4% Smoke + Dense Microscopic Stars */
+    .look::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      /* 4% Smoke Overlay */
+      background-color: rgba(0, 0, 0, 0.04); 
+      /* Dense Star Grain (SVG Noise) */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.99' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity: 0.25; /* Controls the 'Industrial Hum' intensity */
+    }
 
-  .look img { 
-    width: 100%; 
-    display: block;
-    filter: contrast(1.1);
-  }
+    .look img { 
+      width: 100%; 
+      display: block;
+      filter: contrast(1.1);
+    }
 
-  /* FOREFRONT INTERACTION */
-  .look:hover {
-    transform: scale(1.03) translateY(-5px);
-    z-index: 10;
-  }
+    /* FOREFRONT INTERACTION: When window comes to the front */
+    .look:hover {
+      transform: scale(1.03) translateY(-10px);
+      z-index: 10;
+    }
 
-  /* ACTIVATING THE TRAIL */
-  .look:hover::before {
-    opacity: 0.15;
-    transform: translate(-15px, 15px); /* Direction of the trail */
-  }
+    /* ACTIVATING THE TRAIL ON HOVER */
+    .look:hover::before {
+      opacity: 0.18;
+      transform: translate(-20px, 20px); /* The direction the trail pulls */
+    }
 
-  p {
-    margin-top: 15px;
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-</style>
-        </div>
+    p {
+      margin-top: 20px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-top: 1px solid #000;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="runway-container">
+    
+    <div class="look">
+      <img src="look-01.jpg" alt="MA-1 World Panel Jacket">
+      <p>01 / MA-1 WORLD PANEL / RIPSTOP / UNIV. BLUE</p>
     </div>
 
+    <div class="look">
+      <img src="look-02.jpg" alt="Technical Cargo System">
+      <p>02 / GEO-PANEL CARGO / 3L LAMINATE / SMOKE</p>
+    </div>
+
+  </div>
 </body>
 </html>
