@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldArch</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+        .product-item {
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+        .product-image {
+            width: 100%;
+            display: block;
+            filter: grayscale(100%);
+            transition: filter 0.4s ease;
+        }
+        .product-item:hover .product-image {
+            filter: grayscale(0%);
+        }
+        .product-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .product-item:hover .product-overlay {
+            opacity: 1;
+        }
+        .buy-button {
+            background: #fff;
+            color: #000;
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-container">
+        <div class="product-item">
+            <img src="ar-01.jpg" alt="ar-01" class="product-image">
+            <div class="product-overlay">
+                <div>AR-01</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <img src="sm-01.jpg" alt="sm-01" class="product-image">
+            <div class="product-overlay">
+                <div>SM-01</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <img src="vc-01.jpg" alt="vc-01" class="product-image">
+            <div class="product-overlay">
+                <div>VC-01</div>
+                <a href="#" class="buy-button">Buy</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
