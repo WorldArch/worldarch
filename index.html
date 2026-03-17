@@ -11,7 +11,6 @@
       background: #f0f0f0; /* Industrial Gray */
       font-family: 'IBM Plex Mono', monospace;
       margin: 0;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -19,74 +18,45 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10vh 0;
+      padding-top: 5vh;
     }
 
     .look {
       width: 90%;
-      max-width: 800px;
-      margin-bottom: 150px;
+      max-width: 1000px;
+      margin-bottom: 25vh; /* Extreme vertical spacing for breathing room */
       position: relative;
-      /* Smooth 'To the Forefront' transition logic */
-      transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1), z-index 0s;
-      cursor: crosshair;
-      z-index: 1;
-    }
-
-    /* THE TRAIL: Creates the 'after-image' ghosting effect */
-    .look::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #4B9CD3; /* University Blue Base */
-      opacity: 0;
-      transform: translate(0, 0);
-      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-      z-index: -1;
-      filter: blur(8px);
-    }
-
-    /* THE SUBSTANCE: 4% Smoke + Dense Microscopic Stars */
-    .look::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      /* 4% Smoke Overlay */
-      background-color: rgba(0, 0, 0, 0.04); 
-      /* Dense Star Grain (SVG Noise) */
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.99' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      opacity: 0.25; /* Controls the 'Industrial Hum' intensity */
     }
 
     .look img { 
       width: 100%; 
+      height: auto;
+      filter: contrast(1.1); /* Richardson Flash aesthetic */
       display: block;
-      filter: contrast(1.1);
     }
 
-    /* FOREFRONT INTERACTION: When window comes to the front */
-    .look:hover {
-      transform: scale(1.03) translateY(-10px);
-      z-index: 10;
-    }
-
-    /* ACTIVATING THE TRAIL ON HOVER */
-    .look:hover::before {
-      opacity: 0.18;
-      transform: translate(-20px, 20px); /* The direction the trail pulls */
-    }
-
-    p {
-      margin-top: 20px;
-      font-size: 11px;
-      letter-spacing: 0.2em;
+    .meta-data {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       border-top: 1px solid #000;
-      padding-top: 10px;
+      padding-top: 8px;
+    }
+
+    /* Sticky Indicator for scrolling */
+    .look-number {
+      position: absolute;
+      left: -60px;
+      top: 0;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1100px) {
+      .look-number { position: static; margin-bottom: 10px; }
+      .look { width: 95%; }
     }
   </style>
 </head>
@@ -95,15 +65,10 @@
   <div class="runway-container">
     
     <div class="look">
+      <div class="look-number">01</div>
       <img src="look-01.jpg" alt="MA-1 World Panel Jacket">
-      <p>01 / MA-1 WORLD PANEL / RIPSTOP / UNIV. BLUE</p>
+      <div class="meta-data">
+        <span>MA-1 World Panel</span>
+        <span>Textile: Ripstop</span>
+      </div>
     </div>
-
-    <div class="look">
-      <img src="look-02.jpg" alt="Technical Cargo System">
-      <p>02 / GEO-PANEL CARGO / 3L LAMINATE / SMOKE</p>
-    </div>
-
-  </div>
-</body>
-</html>
