@@ -61,33 +61,86 @@
             text-transform: uppercase;
             font-size: 12px;
         }
-    </style>
-</head>
-<body>
+    <style>
+  body { 
+    background: #f0f0f0; 
+    font-family: 'IBM Plex Mono', monospace;
+    margin: 0;
+    overflow-x: hidden;
+  }
 
-    <div class="grid-container">
-        <div class="product-item">
-            <img src="AR-01.jpg" alt="AR-01" class="product-image">
-            <div class="product-overlay">
-                <div>AR-01</div>
-                <a href="#" class="buy-button">Buy</a>
-            </div>
-        </div>
+  .runway-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10vh 0;
+  }
 
-        <div class="product-item">
-            <img src="SM-01.jpg" alt="SM-01" class="product-image">
-            <div class="product-overlay">
-                <div>SM-01</div>
-                <a href="#" class="buy-button">Buy</a>
-            </div>
-        </div>
+  .look {
+    width: 90%;
+    max-width: 800px;
+    margin-bottom: 150px;
+    position: relative;
+    /* Smooth 'To the Forefront' transition */
+    transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1), z-index 0s;
+    cursor: crosshair;
+    z-index: 1;
+  }
 
-        <div class="product-item">
-            <img src="VC-01.jpg" alt="VC-01" class="product-image">
-            <div class="product-overlay">
-                <div>VC-01</div>
-                <a href="#" class="buy-button">Buy</a>
-            </div>
+  /* THE TRAIL: Creates the 'after-image' ghosting effect */
+  .look::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #4B9CD3; /* University Blue Base */
+    opacity: 0;
+    transform: translate(0, 0);
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    z-index: -1;
+    filter: blur(8px);
+  }
+
+  /* THE SUBSTANCE: 4% Smoke + Dense Microscopic Stars */
+  .look::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    /* 4% Smoke Overlay */
+    background-color: rgba(0, 0, 0, 0.04); 
+    /* Dense Star Grain */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.99' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    opacity: 0.3; /* Adjust density intensity here */
+  }
+
+  .look img { 
+    width: 100%; 
+    display: block;
+    filter: contrast(1.1);
+  }
+
+  /* FOREFRONT INTERACTION */
+  .look:hover {
+    transform: scale(1.03) translateY(-5px);
+    z-index: 10;
+  }
+
+  /* ACTIVATING THE TRAIL */
+  .look:hover::before {
+    opacity: 0.15;
+    transform: translate(-15px, 15px); /* Direction of the trail */
+  }
+
+  p {
+    margin-top: 15px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+</style>
         </div>
     </div>
 
