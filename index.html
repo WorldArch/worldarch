@@ -6,227 +6,117 @@
     <title>WorldArch - System</title>
     <style>
         body {
-            margin: 0;
-            overflow: hidden;
-            background: #2a2a2a; /* Smoke grey */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #fff;
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0; overflow: hidden; background: #1a1a1a; 
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; color: #fff; font-family: 'Helvetica', Arial, sans-serif;
             text-transform: uppercase;
         }
 
         /* Background Starfield */
-        .starfield {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        .starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        .star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        /* Watermark Layer */
+        /* Branding Watermark */
         .brand-watermark {
-            position: absolute;
-            font-weight: 900;
-            font-size: 8vw;
-            letter-spacing: -2px;
-            opacity: 0.35;
-            z-index: 1;
-            user-select: none;
-            pointer-events: none;
+            position: absolute; display: flex; flex-direction: column; align-items: center;
+            z-index: 1; user-select: none; pointer-events: none; text-align: center;
         }
+        .main-title { font-weight: 900; font-size: 8vw; letter-spacing: -4px; opacity: 0.2; line-height: 0.8; }
+        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.1; margin-top: 15px; font-weight: 300; }
 
-        /* Shoe/Orbit Layer */
-        .orbit-container {
-            position: relative;
-            width: 1px; height: 1px;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        /* Smaller Orbiting Shoes */
+        .orbit-container { position: relative; width: 1px; height: 1px; z-index: 2; display: flex; justify-content: center; align-items: center; }
+        
+        /* SHRUNK IMAGE SIZE: 160px */
+        .shoe { position: absolute; width: 160px; height: auto; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        
+        .orbit { animation: orbit 18s linear infinite; }
+        .delay { animation-delay: -9s; }
 
-        .shoe {
-            position: absolute;
-            width: 250px;
-            height: auto;
-            cursor: pointer;
-            transition: transform 0.3s ease, filter 0.3s ease;
-            z-index: 5;
-        }
-
-        .orbit {
-            position: absolute;
-            animation: orbit 15s linear infinite;
-        }
-
-        .delay { animation-delay: -7.5s; }
-
+        /* TIGHTER ORBIT RADIUS: 180px */
         @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(260px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(260px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
         }
+        
+        /* HOVER SCALE: Stays prominent but controlled */
+        .shoe:hover { filter: brightness(1.2); transform: scale(1.3) !important; z-index: 999 !important; }
 
-        .shoe:hover {
-            filter: brightness(1.3) contrast(1.1);
-            transform: scale(1.4) !important;
-            z-index: 999 !important; /* Forces hovered shoe to forefront */
+        /* UI Buttons */
+        .ui-btn {
+            position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; padding: 10px 18px; cursor: pointer; z-index: 100; font-size: 9px; letter-spacing: 2px; transition: 0.3s;
         }
+        .ui-btn:hover { background: #fff; color: #000; border-color: #fff; }
+        .left-btn { left: 30px; }
+        .right-btn { right: 30px; }
 
-        /* Support Button Styling */
-        .support-trigger {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: none;
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fff;
-            padding: 10px 20px;
-            cursor: pointer;
-            z-index: 100;
-            font-size: 10px;
-            letter-spacing: 2px;
-            transition: 0.3s;
+        /* Overlays */
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.97); z-index: 2000; justify-content: center; align-items: center;
         }
-
-        .support-trigger:hover {
-            background: #fff;
-            color: #000;
+        .form-content { text-align: center; width: 280px; border: 1px solid #222; padding: 40px; background: #000; }
+        .form-style { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .form-style input, .form-style select, .form-style textarea {
+            background: #111; border: 1px solid #333; padding: 12px; color: #fff; font-family: inherit; font-size: 10px; text-transform: uppercase;
         }
-
-        /* Crypto Support Overlay */
-        #supportOverlay {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .support-content {
-            text-align: center;
-            width: 300px;
-        }
-
-        .support-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .support-form input, .support-form select {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            padding: 12px;
-            color: #fff;
-            font-family: inherit;
-            text-transform: uppercase;
-        }
-
-        .support-form button {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 15px;
-            font-weight: 900;
-            cursor: pointer;
-        }
-        /* Bottom Left Inquiry Button */
-.inquiry-trigger {
-    position: fixed;
-    bottom: 30px;
-    left: 30px; /* Opposite side of Support */
-    background: none;
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    padding: 10px 20px;
-    cursor: pointer;
-    z-index: 100;
-    font-size: 10px;
-    letter-spacing: 2px;
-    transition: 0.3s;
-}
-
-.inquiry-trigger:hover {
-    background: #fff;
-    color: #000;
-}
-
-/* Inquiry Overlay */
-#inquiryOverlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.95);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-}
+        .submit-btn { background: #fff; color: #000; border: none; padding: 12px; font-weight: 900; cursor: pointer; margin-top: 5px; font-size: 10px; }
     </style>
 </head>
 <body>
 
     <div class="starfield" id="starfield"></div>
 
-    <div class="brand-watermark">WorldArch</div>
+    <div class="brand-watermark">
+        <div class="main-title">WorldArch</div>
+        <div class="sub-title">Heavy Records</div>
+    </div>
 
     <div class="orbit-container">
         <img src="SM-01.jpg" class="shoe orbit" alt="SM-01">
         <img src="VC-01.jpg" class="shoe orbit delay" alt="VC-01">
     </div>
 
-    <button class="support-trigger" onclick="toggleSupport()">SUPPORT_SYSTEM</button>
+    <button class="ui-btn left-btn" onclick="toggleUI('inquiryOverlay')">INQUIRY_SYSTEM</button>
+    <button class="ui-btn right-btn" onclick="toggleUI('supportOverlay')">SUPPORT_SYSTEM</button>
 
-    <div id="supportOverlay">
-        <div class="support-content">
-            <h2 style="font-size: 14px; letter-spacing: 5px;">INITIATE_CONTRIBUTION</h2>
-            <p style="font-size: 10px; opacity: 0.5;">REQUEST CRYPTO ROUTING ADDRESS</p>
-            
-            <form action="https://formspree.io/f/YOUR_ID" method="POST" class="support-form">
-                <input type="text" name="name" placeholder="IDENTIFIER" required>
-                <input type="email" name="email" placeholder="EMAIL" required>
+    <div id="inquiryOverlay" class="overlay">
+        <div class="form-content">
+            <h2 style="font-size: 12px; letter-spacing: 4px; opacity: 0.8;">INITIATE_INQUIRY</h2>
+            <form action="https://formspree.io/f/YOUR_ID" method="POST" class="form-style">
+                <input type="text" name="name" placeholder="IDENTIFIER" autocomplete="name" required>
+                <input type="email" name="email" placeholder="EMAIL" autocomplete="email" required>
+                <select name="service">
+                    <option value="Footwear">FOOTWEAR_DESIGN</option>
+                    <option value="Audio">HEAVY_RECORDS_PROD</option>
+                </select>
+                <textarea name="message" placeholder="PROJECT_SCOPE" autocomplete="off" style="height: 60px;"></textarea>
+                <button type="submit" class="submit-btn">SUBMIT_REQUEST</button>
+            </form>
+            <p onclick="toggleUI('inquiryOverlay')" style="cursor: pointer; font-size: 9px; margin-top: 25px; opacity: 0.3; letter-spacing: 2px;">[ CLOSE_SESSION ]</p>
+        </div>
+    </div>
+
+    <div id="supportOverlay" class="overlay">
+        <div class="form-content">
+            <h2 style="font-size: 12px; letter-spacing: 4px; opacity: 0.8;">SUPPORT_SYSTEM</h2>
+            <form action="https://formspree.io/f/YOUR_ID" method="POST" class="form-style">
+                <input type="text" name="name" placeholder="IDENTIFIER" autocomplete="name" required>
+                <input type="email" name="email" placeholder="EMAIL" autocomplete="email" required>
                 <select name="asset">
                     <option value="ETH">ETHEREUM (ETH)</option>
                     <option value="BTC">BITCOIN (BTC)</option>
-                    <option value="SOL">SOLANA (SOL)</option>
                 </select>
-                <button type="submit">REQUEST_ROUTING</button>
+                <button type="submit" class="submit-btn">REQUEST_ROUTING</button>
             </form>
-            
-            <p onclick="toggleSupport()" style="cursor: pointer; font-size: 10px; margin-top: 25px; opacity: 0.3;">[ CLOSE_SESSION ]</p>
+            <p onclick="toggleUI('supportOverlay')" style="cursor: pointer; font-size: 9px; margin-top: 25px; opacity: 0.3; letter-spacing: 2px;">[ CLOSE_SESSION ]</p>
         </div>
     </div>
 
     <script>
-        function toggleInquiry() {
-    const overlay = document.getElementById('inquiryOverlay');
-    if (overlay.style.display === 'flex') {
-        overlay.style.display = 'none';
-    } else {
-        overlay.style.display = 'flex';
-    }
-}
-        // Starfield Logic
+        // Starfield Init
         const starfield = document.getElementById('starfield');
         for (let i = 0; i < 150; i++) {
             const star = document.createElement('div');
@@ -239,36 +129,11 @@
             starfield.appendChild(star);
         }
 
-        // Support Modal Toggle
-        function toggleSupport() {
-            const overlay = document.getElementById('supportOverlay');
-            if (overlay.style.display === 'flex') {
-                overlay.style.display = 'none';
-            } else {
-                overlay.style.display = 'flex';
-            }
+        // Global UI Toggle
+        function toggleUI(id) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
         }
     </script>
-<button class="inquiry-trigger" onclick="toggleInquiry()">INQUIRY_SYSTEM</button>
-
-<div id="inquiryOverlay">
-    <div class="support-content">
-        <h2 style="font-size: 14px; letter-spacing: 5px;">INITIATE_INQUIRY</h2>
-        <p style="font-size: 10px; opacity: 0.5;">DESIGN / AUDIO / SYSTEM_OPS</p>
-        
-        <form action="https://formspree.io/f/YOUR_ID" method="POST" class="support-form">
-            <input type="text" name="name" placeholder="IDENTIFIER" required>
-            <input type="email" name="email" placeholder="EMAIL" required>
-            <select name="service">
-                <option value="Footwear">FOOTWEAR_DESIGN</option>
-                <option value="Audio">HEAVY_RECORDS_PROD</option>
-                <option value="Visuals">WEB_SYSTEMS</option>
-            </select>
-            <textarea name="message" placeholder="PROJECT_SCOPE" style="background: #1a1a1a; border: 1px solid #333; padding: 12px; color: #fff; font-family: inherit; height: 80px; width: 100%; box-sizing: border-box;"></textarea>
-            <button type="submit" style="margin-top: 10px;">SUBMIT_REQUEST</button>
-        </form>
-        
-        <p onclick="toggleInquiry()" style="cursor: pointer; font-size: 10px; margin-top: 25px; opacity: 0.3;">[ CLOSE_SESSION ]</p>
-    </div>
-</div></body>
+</body>
 </html>
