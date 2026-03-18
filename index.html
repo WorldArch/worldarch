@@ -5,6 +5,143 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldArch - Orbit</title>
     <style>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldArch - Orbit</title>
+    <style>
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #2a2a2a; /* Smoke grey */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Starfield background - locked behind everything */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; /* Ensures you can still click the shoes */
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Watermark perfectly centered */
+        .brand-watermark {
+            position: absolute;
+            font-weight: 900;
+            font-size: 8vw;
+            letter-spacing: -2px;
+            opacity: 0.35; /* Adjusted to 35 as requested earlier */
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .shoe {
+            position: absolute;
+            width: 250px;
+            height: auto;
+            pointer-events: auto;
+            transition: filter 0.3s ease, transform 0.3s ease;
+            z-index: 2;
+        }
+
+        /* Top-left corner float */
+        .floating {
+            top: 10%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .orbit-container {
+            position: relative;
+            width: 1px;
+            height: 1px;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .orbit {
+            position: absolute;
+            animation: orbit 15s linear infinite;
+        }
+
+        .delay {
+            animation-delay: -7.5s;
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(240px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(240px) rotate(-360deg); }
+        }
+
+        .shoe:hover {
+            filter: brightness(1.3) contrast(1.1);
+            transform: scale(1.08); /* Slightly more pop on hover */
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+
+    <div class="brand-watermark">WorldArch</div>
+
+    <img src="AR-01.jpg" class="shoe floating" alt="AR-01">
+
+    <div class="orbit-container">
+        <img src="SM-01.jpg" class="shoe orbit" alt="SM-01">
+        <img src="VC-01.jpg" class="shoe orbit delay" alt="VC-01">
+    </div>
+
+    <script>
+        // Generate random stars for the background
+        const starfield = document.getElementById('starfield');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starfield.appendChild(star);
+        }
+    </script>
+</body>
+</html>
+
         body {
             margin: 0;
             overflow: hidden;
