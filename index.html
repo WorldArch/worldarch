@@ -76,11 +76,11 @@
     <button class="ui-btn right-btn">SUPPORT_SYSTEM</button>
 
     <script>
-        // --- HEAVY_SYSTEM MUSIC CONTROLLER ---
-const audio = document.getElementById('mainTrack');
+        const audio = document.getElementById('mainTrack');
 const fill = document.getElementById('progressFill');
+const trackInfoDiv = document.getElementById('trackInfo');
 
-// YOUR ACTIVE REGISTRY
+// --- TRACK REGISTRY ---
 const playlist = [
     "(Instrumental).mp3", 
     "ty who 2 (Mashup).mp3",
@@ -90,31 +90,26 @@ const playlist = [
 let trackIndex = 0;
 
 function initTrack(i) {
-    // Exact file pathing
     audio.src = playlist[i];
-    
-    // Clean display name (removes extension and keeps industrial uppercase)
+    // Clean display: Removes .mp3 and forces UPPERCASE
     const displayName = playlist[i].replace('.mp3', '').toUpperCase();
     
-    // Updates the HUD top-center
-    const trackInfo = document.getElementById('trackInfo');
-    trackInfo.innerHTML = `HEAVY_SYSTEM // ${displayName} // <span id="percent">00.0%</span>`;
-    
+    // Updates the HUD Text
+    trackInfoDiv.innerHTML = `HEAVY_SYSTEM // ${displayName} // STATUS: ACTIVE // <span id="percent">00.0%</span>`;
     audio.load();
 }
 
-// THE INFINITE ROTATION LOGIC
+// --- INFINITE ROTATION LOGIC ---
 audio.onended = () => {
     trackIndex++; 
-    // If we reach the end of the list, reset to 0
     if (trackIndex >= playlist.length) {
-        trackIndex = 0; 
+        trackIndex = 0; // The Loop Reset
     }
     initTrack(trackIndex);
     audio.play();
 };
 
-// LIVE DATA FEED (PERCENTAGE)
+// --- LIVE DATA FEED ---
 audio.ontimeupdate = () => {
     if (audio.duration) {
         const p = (audio.currentTime / audio.duration) * 100;
@@ -126,17 +121,17 @@ audio.ontimeupdate = () => {
     }
 };
 
-// MANUAL SCRUBBING
+// --- MANUAL PROGRESS CONTROL ---
 function scrub(e) {
     const rect = document.getElementById('progressBar').getBoundingClientRect();
     audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
     audio.play();
 }
 
-// SYSTEM BOOT
+// --- SYSTEM BOOT ---
 initTrack(trackIndex);
 
-// FIRST-CLICK ACTIVATION (Bypass Autoplay Block)
+// First-click bypass for browser autoplay restrictions
 document.body.addEventListener('click', () => { 
     if(audio.paused) audio.play(); 
 }, {once: true});
