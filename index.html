@@ -80,7 +80,8 @@
 const fill = document.getElementById('progressFill');
 const trackInfoDiv = document.getElementById('trackInfo');
 
-// --- TRACK REGISTRY ---
+// --- THE REGISTRY ---
+// Double-check these match your GitHub filenames EXACTLY
 const playlist = [
     "(Instrumental).mp3", 
     "ty who 2 (Mashup).mp3",
@@ -90,51 +91,56 @@ const playlist = [
 let trackIndex = 0;
 
 function initTrack(i) {
+    console.log(`SYSTEM_LOG: LOADING_TRACK // Index: ${i} // Name: ${playlist[i]}`);
     audio.src = playlist[i];
-    // Clean display: Removes .mp3 and forces UPPERCASE
-    const displayName = playlist[i].replace('.mp3', '').toUpperCase();
     
-    // Updates the HUD Text
+    const displayName = playlist[i].replace('.mp3', '').toUpperCase();
     trackInfoDiv.innerHTML = `HEAVY_SYSTEM // ${displayName} // STATUS: ACTIVE // <span id="percent">00.0%</span>`;
+    
     audio.load();
 }
 
-// --- INFINITE ROTATION LOGIC ---
+// --- THE AUTO-ROTATE FIX ---
 audio.onended = () => {
+    console.log("SYSTEM_LOG: TRACK_ENDED // TRIGGERING_NEXT");
     trackIndex++; 
+    
     if (trackIndex >= playlist.length) {
-        trackIndex = 0; // The Loop Reset
+        trackIndex = 0; 
     }
+    
     initTrack(trackIndex);
-    audio.play();
+    
+    // Small delay to ensure the browser registers the new source
+    setTimeout(() => {
+        audio.play().catch(err => console.log("Playback blocked: " + err));
+    }, 100);
 };
 
-// --- LIVE DATA FEED ---
+// Error Catcher: Tells you if a file is missing
+audio.onerror = () => {
+    console.error(`SYSTEM_ERROR: CANNOT_FIND_FILE // ${playlist[trackIndex]}`);
+    trackInfoDiv.innerHTML = `HEAVY_SYSTEM // ERROR: FILE_NOT_FOUND // <span id="percent">00.0%</span>`;
+};
+
 audio.ontimeupdate = () => {
     if (audio.duration) {
         const p = (audio.currentTime / audio.duration) * 100;
         fill.style.width = p + '%';
-        
-        // Target the span inside the updated innerHTML
         const livePercent = document.getElementById('percent');
         if(livePercent) livePercent.innerText = p.toFixed(1) + '%';
     }
 };
 
-// --- MANUAL PROGRESS CONTROL ---
 function scrub(e) {
     const rect = document.getElementById('progressBar').getBoundingClientRect();
     audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
     audio.play();
 }
 
-// --- SYSTEM BOOT ---
+// BOOT
 initTrack(trackIndex);
-
-// First-click bypass for browser autoplay restrictions
-document.body.addEventListener('click', () => { 
-    if(audio.paused) audio.play(); 
-}, {once: true});
+document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
     </script>
 </body>
 </html>
