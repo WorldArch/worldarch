@@ -76,37 +76,70 @@
     <button class="ui-btn right-btn">SUPPORT_SYSTEM</button>
 
     <script>
-        // Star Background
-        const sf = document.getElementById('starfield');
-        for (let i = 0; i < 120; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
-            s.style.width = '1px'; s.style.height = '1px';
-            s.style.left = Math.random() * 100 + '%';
-            s.style.top = Math.random() * 100 + '%';
-            sf.appendChild(s);
-        }
+        // --- HEAVY_SYSTEM MUSIC CONTROLLER ---
+const audio = document.getElementById('mainTrack');
+const fill = document.getElementById('progressFill');
 
-        // Music Logic
-        const audio = document.getElementById('mainTrack');
-        const fill = document.getElementById('progressFill');
-        const pct = document.getElementById('percent');
+// YOUR ACTIVE REGISTRY
+const playlist = [
+    "(Instrumental).mp3", 
+    "ty who 2 (Mashup).mp3",
+    "Bubbles.mp3"
+];
 
-        audio.ontimeupdate = () => {
-            if (audio.duration) {
-                const p = (audio.currentTime / audio.duration) * 100;
-                fill.style.width = p + '%';
-                pct.innerText = p.toFixed(1) + '%';
-            }
-        };
+let trackIndex = 0;
 
-        function scrub(e) {
-            const rect = document.getElementById('progressBar').getBoundingClientRect();
-            audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
-            audio.play();
-        }
+function initTrack(i) {
+    // Exact file pathing
+    audio.src = playlist[i];
+    
+    // Clean display name (removes extension and keeps industrial uppercase)
+    const displayName = playlist[i].replace('.mp3', '').toUpperCase();
+    
+    // Updates the HUD top-center
+    const trackInfo = document.getElementById('trackInfo');
+    trackInfo.innerHTML = `HEAVY_SYSTEM // ${displayName} // <span id="percent">00.0%</span>`;
+    
+    audio.load();
+}
 
-        document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
+// THE INFINITE ROTATION LOGIC
+audio.onended = () => {
+    trackIndex++; 
+    // If we reach the end of the list, reset to 0
+    if (trackIndex >= playlist.length) {
+        trackIndex = 0; 
+    }
+    initTrack(trackIndex);
+    audio.play();
+};
+
+// LIVE DATA FEED (PERCENTAGE)
+audio.ontimeupdate = () => {
+    if (audio.duration) {
+        const p = (audio.currentTime / audio.duration) * 100;
+        fill.style.width = p + '%';
+        
+        // Target the span inside the updated innerHTML
+        const livePercent = document.getElementById('percent');
+        if(livePercent) livePercent.innerText = p.toFixed(1) + '%';
+    }
+};
+
+// MANUAL SCRUBBING
+function scrub(e) {
+    const rect = document.getElementById('progressBar').getBoundingClientRect();
+    audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+    audio.play();
+}
+
+// SYSTEM BOOT
+initTrack(trackIndex);
+
+// FIRST-CLICK ACTIVATION (Bypass Autoplay Block)
+document.body.addEventListener('click', () => { 
+    if(audio.paused) audio.play(); 
+}, {once: true});
     </script>
 </body>
 </html>
