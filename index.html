@@ -5,49 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldArch - System</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Helvetica, sans-serif; text-transform: uppercase; }
+        body { margin: 0; overflow: hidden; background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Helvetica, Arial, sans-serif; text-transform: uppercase; }
         .starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 3s infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .star { position: absolute; background: #fff; border-radius: 50%; }
 
-        /* Branding & Instagram */
+        /* Branding & Identity */
         .brand-watermark { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
-        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.15; letter-spacing: -4px; line-height: 0.8; }
-        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.08; margin-top: 10px; }
-        .insta-tag { font-size: 9px; letter-spacing: 4px; color: #fff; text-decoration: none; opacity: 0.2; margin-top: 15px; transition: 0.3s; pointer-events: auto; }
-        .insta-tag:hover { opacity: 1; letter-spacing: 6px; }
+        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.15; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
+        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.08; margin-top: 10px; pointer-events: none; }
+        
+        /* Instagram Access Link */
+        .insta-tag { display: flex; align-items: center; gap: 10px; font-size: 8px; letter-spacing: 3px; color: #fff; text-decoration: none; opacity: 0.2; margin-top: 20px; transition: 0.4s; padding: 8px 15px; border: 1px solid transparent; }
+        .insta-tag:hover { opacity: 1; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); letter-spacing: 4px; }
+        .insta-icon { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 2; }
 
-        /* Custom Music Player (Top) */
-        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 250px; z-index: 100; text-align: center; opacity: 0.3; transition: 0.5s; }
-        #heavyPlayer:hover { opacity: 1; }
-        #trackInfo { font-size: 8px; letter-spacing: 3px; margin-bottom: 8px; }
-        #progressBar { width: 100%; height: 1px; background: rgba(255,255,255,0.1); cursor: pointer; position: relative; }
-        #progressFill { height: 100%; background: #fff; width: 0%; }
-
-        /* 3-Shoe Orbit (Refined Size & Radius) */
+        /* Triple Orbit Logic (18s Rotation / 3 = 6s Gaps) */
         .orbit-container { position: relative; z-index: 10; width: 1px; height: 1px; }
         .shoe { position: absolute; width: 160px; transition: 0.4s; cursor: pointer; transform-origin: center; }
-        .orbit { animation: orbit 20s linear infinite; }
-        .delay-1 { animation-delay: -6.6s; }
-        .delay-2 { animation-delay: -13.3s; }
+        .orbit { animation: orbit 18s linear infinite; }
+        .delay-1 { animation-delay: -6s; }
+        .delay-2 { animation-delay: -12s; }
 
         @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(190px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(190px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(200px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
         }
-        .shoe:hover { filter: brightness(1.3); transform: scale(1.2) !important; z-index: 1000; }
+        .shoe:hover { filter: brightness(1.3); transform: scale(1.15) !important; z-index: 1000; }
+
+        /* Music Player Interface */
+        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 220px; z-index: 100; text-align: center; opacity: 0.3; transition: 0.5s; }
+        #heavyPlayer:hover { opacity: 1; }
+        #trackInfo { font-size: 8px; letter-spacing: 3px; margin-bottom: 8px; }
+        #progressBar { width: 100%; height: 1px; background: rgba(255,255,255,0.1); cursor: pointer; }
+        #progressFill { height: 100%; background: #fff; width: 0%; transition: width 0.1s linear; }
 
         /* UI Buttons */
-        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px 18px; cursor: pointer; font-size: 9px; letter-spacing: 2px; z-index: 100; transition: 0.3s; }
+        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px 18px; cursor: pointer; font-size: 9px; letter-spacing: 2px; z-index: 100; }
         .ui-btn:hover { background: #fff; color: #000; }
-        .left-btn { left: 30px; }
-        .right-btn { right: 30px; }
-
-        /* Form Overlays */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
-        .form-content { text-align: center; width: 280px; }
-        .form-style { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .form-style input, .form-style textarea { background: #111; border: 1px solid #333; padding: 12px; color: #fff; font-family: inherit; font-size: 10px; text-transform: uppercase; }
+        .left-btn { left: 30px; } .right-btn { right: 30px; }
     </style>
 </head>
 <body>
@@ -55,17 +50,21 @@
     <div class="starfield" id="starfield"></div>
 
     <div id="heavyPlayer">
-    <div id="trackInfo">HEAVY_SYSTEM // <span id="percent">00.0%</span></div>
-    <div id="progressBar" onclick="scrub(event)">
-        <div id="progressFill"></div>
+        <div id="trackInfo">HEAVY_SYSTEM // <span id="percent">00.0%</span></div>
+        <div id="progressBar" onclick="scrub(event)">
+            <div id="progressFill"></div>
+        </div>
+        <audio id="mainTrack" src="(Instrumental).mp3" loop></audio>
     </div>
-    <audio id="mainTrack" src="(Instrumental).mp3" loop></audio>
-</div>
 
     <div class="brand-watermark">
         <div class="main-title">WorldArch</div>
         <div class="sub-title">Heavy Records</div>
-        <a href="https://instagram.com/xnewworld" target="_blank" class="insta-tag">@XNEWWORLD</a>
+        
+        <a href="https://instagram.com/xnewworld" target="_blank" class="insta-tag">
+            <svg class="insta-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            @XNEWWORLD // [ ACCESS_DESIGNS ]
+        </a>
     </div>
 
     <div class="orbit-container">
@@ -74,34 +73,13 @@
         <img src="TR-01.jpg" class="shoe orbit delay-2" alt="03">
     </div>
 
-    <button class="ui-btn left-btn" onclick="toggleUI('inquiryOverlay')">INQUIRY_SYSTEM</button>
-    <button class="ui-btn right-btn" onclick="toggleUI('supportOverlay')">SUPPORT_SYSTEM</button>
-
-    <div id="inquiryOverlay" class="overlay">
-        <div class="form-content">
-            <h2 style="font-size: 12px; letter-spacing: 4px;">INITIATE_INQUIRY</h2>
-            <form class="form-style" action="https://formspree.io/f/YOUR_ID" method="POST">
-                <input type="text" name="name" placeholder="IDENTIFIER" autocomplete="name" required>
-                <input type="email" name="email" placeholder="EMAIL" autocomplete="email" required>
-                <textarea name="msg" placeholder="PROJECT_SCOPE" autocomplete="off"></textarea>
-                <button type="submit" class="ui-btn" style="position:static; width:100%; margin-top:10px;">SUBMIT</button>
-            </form>
-            <p onclick="toggleUI('inquiryOverlay')" style="cursor:pointer; font-size:9px; margin-top:20px; opacity:0.3;">[ CLOSE_SESSION ]</p>
-        </div>
-    </div>
-
-    <div id="supportOverlay" class="overlay">
-        <div class="form-content">
-            <h2 style="font-size: 12px; letter-spacing: 4px;">SUPPORT_SYSTEM</h2>
-            <p style="font-size: 10px; opacity: 0.5;">ROUTING_TO_HELP_DESK...</p>
-            <p onclick="toggleUI('supportOverlay')" style="cursor:pointer; font-size:9px; margin-top:20px; opacity:0.3;">[ CLOSE_SESSION ]</p>
-        </div>
-    </div>
+    <button class="ui-btn left-btn">INQUIRY_SYSTEM</button>
+    <button class="ui-btn right-btn">SUPPORT_SYSTEM</button>
 
     <script>
-        // Starfield Init
+        // Star Background
         const sf = document.getElementById('starfield');
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 120; i++) {
             const s = document.createElement('div');
             s.className = 'star';
             s.style.width = '1px'; s.style.height = '1px';
@@ -110,21 +88,17 @@
             sf.appendChild(s);
         }
 
-        // UI Toggles
-        function toggleUI(id) {
-            const el = document.getElementById(id);
-            el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-        }
-
         // Music Logic
         const audio = document.getElementById('mainTrack');
         const fill = document.getElementById('progressFill');
         const pct = document.getElementById('percent');
 
         audio.ontimeupdate = () => {
-            const p = (audio.currentTime / audio.duration) * 100;
-            fill.style.width = p + '%';
-            pct.innerText = p.toFixed(1) + '%';
+            if (audio.duration) {
+                const p = (audio.currentTime / audio.duration) * 100;
+                fill.style.width = p + '%';
+                pct.innerText = p.toFixed(1) + '%';
+            }
         };
 
         function scrub(e) {
@@ -133,7 +107,6 @@
             audio.play();
         }
 
-        // Start music on first click anywhere
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
     </script>
 </body>
