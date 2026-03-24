@@ -178,6 +178,41 @@ function drift() {
 
 // Start the drift
 drift();
+
+        // --- THE SYSTEM TRANSITION ---
+const orbitContainer = document.querySelector('.orbit-container');
+const windows = document.querySelectorAll('.window');
+const brand = document.querySelector('.brand-watermark');
+
+// Trigger the Fashion Section on Hover
+orbitContainer.addEventListener('mouseenter', () => {
+    // 1. Fade the branding to "Ghost" mode
+    brand.style.opacity = "0.02";
+    brand.style.transform = "scale(0.95)";
+    
+    // 2. Bring the Floating Windows into "Active" status
+    windows.forEach((win, i) => {
+        win.style.opacity = "1";
+        win.style.pointerEvents = "auto";
+        // Each window "drifts" into a preset editorial position
+        win.style.filter = "blur(0px)";
+    });
+    
+    // 3. Slow the orbit for inspection
+    const shoes = document.querySelectorAll('.shoe');
+    shoes.forEach(s => s.style.animationPlayState = 'paused');
+});
+
+// Reset on Mouse Leave
+orbitContainer.addEventListener('mouseleave', () => {
+    brand.style.opacity = "0.1";
+    brand.style.transform = "scale(1)";
+    windows.forEach(win => {
+        win.style.opacity = "0.3"; // Mute them when not focused
+    });
+    const shoes = document.querySelectorAll('.shoe');
+    shoes.forEach(s => s.style.animationPlayState = 'running');
+});
     </script>
 </body>
 </html>
