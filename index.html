@@ -7,41 +7,59 @@
     <style>
         body { margin: 0; overflow: hidden; background: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Helvetica, Arial, sans-serif; text-transform: uppercase; }
         
-        /* Starfield Layer */
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Branding & Identity */
+        /* Branding */
         .brand-watermark { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
-        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.15; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
-        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.08; margin-top: 10px; pointer-events: none; }
-        
-        /* Instagram Link */
-        .insta-tag { display: flex; align-items: center; gap: 10px; font-size: 8px; letter-spacing: 3px; color: #fff; text-decoration: none; opacity: 0.2; margin-top: 20px; transition: 0.4s; padding: 8px 15px; border: 1px solid transparent; z-index: 100; }
-        .insta-tag:hover { opacity: 1; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); letter-spacing: 4px; }
+        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.1; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
+        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.05; margin-top: 10px; pointer-events: none; }
 
-        /* Enhanced Triple Orbit */
-        .orbit-container { position: relative; z-index: 10; width: 1px; height: 1px; }
-        .shoe { position: absolute; width: 220px; transition: filter 0.4s, transform 0.4s; cursor: pointer; transform-origin: center; margin-left: -110px; margin-top: -110px; }
-        .orbit { animation: orbit 20s linear infinite; }
-        .delay-1 { animation-delay: -6.6s; }
-        .delay-2 { animation-delay: -13.3s; }
+        /* Floating Window System */
+        .window {
+            position: absolute;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 5px;
+            width: 280px;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+            cursor: crosshair;
+        }
+
+        .window:hover {
+            z-index: 100;
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.08) !important; /* Overrides the drift slightly on hover */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        .window img { width: 100%; height: auto; filter: grayscale(1) brightness(0.8); transition: 0.8s; }
+        .window:hover img { filter: grayscale(0) brightness(1); }
+
+        .window-meta { font-size: 7px; letter-spacing: 2px; padding: 12px; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; }
+
+        /* Triple Orbit Logic */
+        .orbit-container { position: relative; z-index: 5; width: 1px; height: 1px; }
+        .shoe { position: absolute; width: 180px; transition: 0.4s; cursor: pointer; transform-origin: center; margin-left: -90px; margin-top: -90px; opacity: 0.4; }
+        .orbit { animation: orbit 25s linear infinite; }
+        .delay-1 { animation-delay: -8.3s; }
+        .delay-2 { animation-delay: -16.6s; }
 
         @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(280px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(280px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(300px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(300px) rotate(-360deg); }
         }
-        .shoe:hover { filter: brightness(1.5) contrast(1.2); transform: scale(1.2) !important; z-index: 1000; }
 
-        /* HUD Interface */
-        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 100; text-align: center; opacity: 0.3; transition: 0.5s; }
+        /* UI HUD */
+        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 200; text-align: center; opacity: 0.2; transition: 0.5s; }
         #heavyPlayer:hover { opacity: 1; }
         #trackInfo { font-size: 8px; letter-spacing: 3px; margin-bottom: 12px; }
         #progressBar { width: 100%; height: 1px; background: rgba(255,255,255,0.1); cursor: pointer; }
         #progressFill { height: 100%; background: #fff; width: 0%; transition: width 0.1s linear; }
 
-        /* System Buttons */
-        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px 18px; cursor: pointer; font-size: 9px; letter-spacing: 2px; z-index: 100; transition: 0.3s; }
-        .ui-btn:hover { background: #fff; color: #000; }
+        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); padding: 10px 18px; cursor: pointer; font-size: 8px; letter-spacing: 3px; z-index: 200; transition: 0.3s; }
+        .ui-btn:hover { background: #fff; color: #000; opacity: 1; }
         .left-btn { left: 30px; } .right-btn { right: 30px; }
     </style>
 </head>
@@ -60,31 +78,23 @@
     <div class="brand-watermark">
         <div class="main-title">WorldArch</div>
         <div class="sub-title">Heavy Records</div>
-        <a href="https://instagram.com/xnewworld" target="_blank" class="insta-tag">@XNEWWORLD // [ ACCESS ]</a>
     </div>
-<div class="window" style="top: 15%; left: 10%; transform: rotate(-2deg);">
-    <img src="MODEL_LOOK_01.jpg">
-    <div class="window-meta">
-        <span>LOOK_01 // ARCHIVE</span>
-        <span>COORD: 44.97 // 93.26</span>
-    </div>
-</div>
 
-<div class="window" style="top: 40%; right: 15%; transform: rotate(3deg);">
-    <img src="MODEL_LOOK_02.jpg">
-    <div class="window-meta">
-        <span>LOOK_02 // HEAVY_ARCH</span>
-        <span>STATUS: SAMPLED</span>
+    <div class="window" style="top: 10%; left: 8%; transform: rotate(-3deg);">
+        <img src="MODEL_LOOK_01.jpg">
+        <div class="window-meta"><span>LOOK_01 // ARCHIVE</span><span>44.97 // 93.26</span></div>
     </div>
-</div>
 
-<div class="window" style="bottom: 10%; left: 30%; transform: rotate(1deg);">
-    <img src="MODEL_LOOK_03.jpg">
-    <div class="window-meta">
-        <span>LOOK_03 // REVERSE_WEAVE</span>
-        <span>TYPE: TECH_SPEC</span>
+    <div class="window" style="top: 55%; right: 10%; transform: rotate(2deg);">
+        <img src="MODEL_LOOK_02.jpg">
+        <div class="window-meta"><span>LOOK_02 // HEAVY_ARCH</span><span>STATUS: SAMPLED</span></div>
     </div>
-</div>
+
+    <div class="window" style="bottom: 15%; left: 25%; transform: rotate(-1deg);">
+        <img src="MODEL_LOOK_03.jpg">
+        <div class="window-meta"><span>LOOK_03 // REVERSE_WEAVE</span><span>TYPE: TECH_SPEC</span></div>
+    </div>
+
     <div class="orbit-container">
         <img src="SM-01.jpg" class="shoe orbit" alt="01">
         <img src="VC-01.jpg" class="shoe orbit delay-1" alt="02">
@@ -101,50 +111,34 @@
         const fill = document.getElementById('progressFill');
         const trackInfoDiv = document.getElementById('trackInfo');
 
-        const playlist = [
-            "(Instrumental).mp3", "ty who 2 (Mashup).mp3", "Bubbles.mp3", 
-            "soul breaks.mp3", "iano choppers.mp3"
-        ];
+        const playlist = ["(Instrumental).mp3", "ty who 2 (Mashup).mp3", "Bubbles.mp3", "soul breaks.mp3", "iano choppers.mp3"];
         let trackIndex = 0;
 
-        // --- THE STARFIELD ENGINE ---
+        // STARFIELD
         let stars = [];
         function initStars() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             stars = [];
-            for(let i=0; i<200; i++) {
-                stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.5, speed: Math.random()*0.5 });
-            }
+            for(let i=0; i<200; i++) { stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.3 }); }
         }
-
         function drawStars() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             stars.forEach(s => {
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-                ctx.fill();
-                s.y += s.speed; // This makes the stars "fall" or move slowly
-                if(s.y > canvas.height) s.y = 0;
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+                s.y += s.speed; if(s.y > canvas.height) s.y = 0;
             });
             requestAnimationFrame(drawStars);
         }
 
-        // --- PLAYER LOGIC ---
+        // PLAYER
         function initTrack(i) {
             audio.src = playlist[i];
             const displayName = playlist[i].replace('.mp3', '').toUpperCase();
             trackInfoDiv.innerHTML = `HEAVY_SYSTEM // ${displayName} // STATUS: ACTIVE // <span id="percent">00.0%</span>`;
             audio.load();
         }
-
-        audio.onended = () => {
-            trackIndex = (trackIndex + 1) % playlist.length;
-            initTrack(trackIndex);
-            setTimeout(() => { audio.play(); }, 200);
-        };
-
+        audio.onended = () => { trackIndex = (trackIndex + 1) % playlist.length; initTrack(trackIndex); setTimeout(() => { audio.play(); }, 200); };
         audio.ontimeupdate = () => {
             if (audio.duration) {
                 const p = (audio.currentTime / audio.duration) * 100;
@@ -152,57 +146,14 @@
                 document.getElementById('percent').innerText = p.toFixed(1) + '%';
             }
         };
-
         function scrub(e) {
             const rect = document.getElementById('progressBar').getBoundingClientRect();
             audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
             audio.play();
         }
-/* Floating Window System */
-.window {
-    position: absolute;
-    background: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px); /* Glass effect */
-    padding: 5px;
-    width: 300px;
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 10;
-}
 
-/* The Zero-Click Activation */
-.window:hover {
-    z-index: 100;
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05) translateY(-10px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-
-.window img {
-    width: 100%;
-    height: auto;
-    filter: grayscale(1) contrast(1.1);
-    transition: 0.6s;
-}
-
-.window:hover img {
-    filter: grayscale(0);
-}
-
-/* Technical Labeling on Windows */
-.window-meta {
-    font-size: 7px;
-    letter-spacing: 2px;
-    padding: 10px;
-    color: rgba(255,255,255,0.4);
-    display: flex;
-    justify-content: space-between;
-}
-        // --- BOOT ---
+        initStars(); drawStars(); initTrack(trackIndex);
         window.addEventListener('resize', initStars);
-        initStars();
-        drawStars();
-        initTrack(trackIndex);
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
     </script>
 </body>
