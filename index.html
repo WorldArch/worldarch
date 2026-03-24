@@ -62,7 +62,29 @@
         <div class="sub-title">Heavy Records</div>
         <a href="https://instagram.com/xnewworld" target="_blank" class="insta-tag">@XNEWWORLD // [ ACCESS ]</a>
     </div>
+<div class="window" style="top: 15%; left: 10%; transform: rotate(-2deg);">
+    <img src="MODEL_LOOK_01.jpg">
+    <div class="window-meta">
+        <span>LOOK_01 // ARCHIVE</span>
+        <span>COORD: 44.97 // 93.26</span>
+    </div>
+</div>
 
+<div class="window" style="top: 40%; right: 15%; transform: rotate(3deg);">
+    <img src="MODEL_LOOK_02.jpg">
+    <div class="window-meta">
+        <span>LOOK_02 // HEAVY_ARCH</span>
+        <span>STATUS: SAMPLED</span>
+    </div>
+</div>
+
+<div class="window" style="bottom: 10%; left: 30%; transform: rotate(1deg);">
+    <img src="MODEL_LOOK_03.jpg">
+    <div class="window-meta">
+        <span>LOOK_03 // REVERSE_WEAVE</span>
+        <span>TYPE: TECH_SPEC</span>
+    </div>
+</div>
     <div class="orbit-container">
         <img src="SM-01.jpg" class="shoe orbit" alt="01">
         <img src="VC-01.jpg" class="shoe orbit delay-1" alt="02">
@@ -136,7 +158,46 @@
             audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
             audio.play();
         }
+/* Floating Window System */
+.window {
+    position: absolute;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); /* Glass effect */
+    padding: 5px;
+    width: 300px;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10;
+}
 
+/* The Zero-Click Activation */
+.window:hover {
+    z-index: 100;
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05) translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.window img {
+    width: 100%;
+    height: auto;
+    filter: grayscale(1) contrast(1.1);
+    transition: 0.6s;
+}
+
+.window:hover img {
+    filter: grayscale(0);
+}
+
+/* Technical Labeling on Windows */
+.window-meta {
+    font-size: 7px;
+    letter-spacing: 2px;
+    padding: 10px;
+    color: rgba(255,255,255,0.4);
+    display: flex;
+    justify-content: space-between;
+}
         // --- BOOT ---
         window.addEventListener('resize', initStars);
         initStars();
