@@ -5,37 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldArch - System</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; font-family: Helvetica, Arial, sans-serif; text-transform: uppercase; }
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #0a0a0a; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            color: #fff; 
+            font-family: Helvetica, Arial, sans-serif; 
+            text-transform: uppercase; 
+            cursor: default;
+        }
         
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Branding */
-        .brand-watermark { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
+        /* Branding Layer */
+        .brand-watermark { 
+            position: absolute; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            z-index: 1; 
+            text-align: center; 
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         .main-title { font-weight: 900; font-size: 8vw; opacity: 0.1; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
         .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.05; margin-top: 10px; pointer-events: none; }
 
-        /* Floating Window System */
+        /* Fashion Window System */
         .window {
-    position: absolute;
-    background: rgba(10, 10, 10, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    padding: 5px;
-    width: 280px;
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 10;
-    
-    /* THE FIX: Remove crosshair, set to invisible */
-    cursor: default; 
-    opacity: 0; 
-    pointer-events: none;
-    filter: blur(15px);
+            position: absolute;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 5px;
+            width: 280px;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            opacity: 0; 
+            pointer-events: none;
+            filter: blur(15px);
         }
 
         .window:hover {
-            z-index: 100;
+            z-index: 200;
             border-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.08) !important; /* Overrides the drift slightly on hover */
+            transform: scale(1.08) !important;
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
 
@@ -44,26 +61,26 @@
 
         .window-meta { font-size: 7px; letter-spacing: 2px; padding: 12px; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; }
 
-        /* Triple Orbit Logic */
-        .orbit-container { position: relative; z-index: 5; width: 1px; height: 1px; }
-        .shoe { position: absolute; width: 180px; transition: 0.4s; cursor: pointer; transform-origin: center; margin-left: -90px; margin-top: -90px; opacity: 0.4; }
+        /* Orbit Logic */
+        .orbit-container { position: relative; z-index: 50; width: 1px; height: 1px; }
+        .shoe { position: absolute; width: 220px; transition: 0.4s; cursor: pointer; transform-origin: center; margin-left: -110px; margin-top: -110px; opacity: 0.4; filter: grayscale(1); }
         .orbit { animation: orbit 25s linear infinite; }
         .delay-1 { animation-delay: -8.3s; }
         .delay-2 { animation-delay: -16.6s; }
 
         @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(300px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(300px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(320px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(320px) rotate(-360deg); }
         }
 
-        /* UI HUD */
-        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 200; text-align: center; opacity: 0.2; transition: 0.5s; }
+        /* Player HUD */
+        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 300; text-align: center; opacity: 0.2; transition: 0.5s; }
         #heavyPlayer:hover { opacity: 1; }
         #trackInfo { font-size: 8px; letter-spacing: 3px; margin-bottom: 12px; }
         #progressBar { width: 100%; height: 1px; background: rgba(255,255,255,0.1); cursor: pointer; }
         #progressFill { height: 100%; background: #fff; width: 0%; transition: width 0.1s linear; }
 
-        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); padding: 10px 18px; cursor: pointer; font-size: 8px; letter-spacing: 3px; z-index: 200; transition: 0.3s; }
+        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); padding: 10px 18px; cursor: pointer; font-size: 8px; letter-spacing: 3px; z-index: 300; transition: 0.3s; }
         .ui-btn:hover { background: #fff; color: #000; opacity: 1; }
         .left-btn { left: 30px; } .right-btn { right: 30px; }
     </style>
@@ -86,24 +103,22 @@
     </div>
 
     <div class="window" style="top: 10%; left: 8%; transform: rotate(-3deg);">
-        <img src="MODEL_LOOK_01.jpg">
-        <div class="window-meta"><span>LOOK_01 // ARCHIVE</span><span>44.97 // 93.26</span></div>
+        <img src="fullpaint2.jpg">
+        <div class="window-meta"><span>UNIT: PAINT_02</span><span>STATUS: ARCHIVE</span></div>
     </div>
-
     <div class="window" style="top: 55%; right: 10%; transform: rotate(2deg);">
-        <img src="MODEL_LOOK_02.jpg">
-        <div class="window-meta"><span>LOOK_02 // HEAVY_ARCH</span><span>STATUS: SAMPLED</span></div>
+        <img src="fefullwaleish2.jpg">
+        <div class="window-meta"><span>UNIT: WALEISH_02</span><span>STATUS: SAMPLED</span></div>
     </div>
-
     <div class="window" style="bottom: 15%; left: 25%; transform: rotate(-1deg);">
-        <img src="MODEL_LOOK_03.jpg">
-        <div class="window-meta"><span>LOOK_03 // REVERSE_WEAVE</span><span>TYPE: TECH_SPEC</span></div>
+        <img src="febottom.jpg">
+        <div class="window-meta"><span>UNIT: FE_BOTTOM</span><span>TYPE: TECH_SPEC</span></div>
     </div>
 
     <div class="orbit-container">
-        <img src="SM-01.jpg" class="shoe orbit" alt="01">
-        <img src="VC-01.jpg" class="shoe orbit delay-1" alt="02">
-        <img src="AR-01.jpg" class="shoe orbit delay-2" alt="03">
+        <img src="majalperu.jpg" class="shoe orbit" alt="01">
+        <img src="mafulljggng3.jpg" class="shoe orbit delay-1" alt="02">
+        <img src="mafulljggng2.jpg" class="shoe orbit delay-2" alt="03">
     </div>
 
     <button class="ui-btn left-btn">INQUIRY</button>
@@ -115,6 +130,9 @@
         const audio = document.getElementById('mainTrack');
         const fill = document.getElementById('progressFill');
         const trackInfoDiv = document.getElementById('trackInfo');
+        const windows = document.querySelectorAll('.window');
+        const orbitContainer = document.querySelector('.orbit-container');
+        const brand = document.querySelector('.brand-watermark');
 
         const playlist = ["(Instrumental).mp3", "ty who 2 (Mashup).mp3", "Bubbles.mp3", "soul breaks.mp3", "iano choppers.mp3"];
         let trackIndex = 0;
@@ -157,66 +175,47 @@
             audio.play();
         }
 
-        initStars(); drawStars(); initTrack(trackIndex);
+        // DRIFT ENGINE
+        let angle = 0;
+        function drift() {
+            angle += 0.002;
+            windows.forEach((win, i) => {
+                if (win.style.opacity === "0" || win.style.opacity === "") {
+                    const x = Math.sin(angle + i) * 15; 
+                    const y = Math.cos(angle * 0.8 + i) * 10;
+                    const initialRotate = win.style.transform.includes('rotate') 
+                        ? win.style.transform.split('rotate(')[1].split(')')[0] : '0deg';
+                    win.style.transform = `translate(${x}px, ${y}px) rotate(${initialRotate})`;
+                }
+            });
+            requestAnimationFrame(drift);
+        }
+
+        // TRANSITION
+        orbitContainer.addEventListener('mouseenter', () => {
+            brand.style.opacity = "0.02";
+            windows.forEach(win => {
+                win.style.opacity = "1"; 
+                win.style.pointerEvents = "auto"; 
+                win.style.filter = "blur(0px)"; 
+            });
+            document.querySelectorAll('.shoe').forEach(s => s.style.animationPlayState = 'paused');
+        });
+
+        orbitContainer.addEventListener('mouseleave', () => {
+            brand.style.opacity = "0.1";
+            windows.forEach(win => {
+                win.style.opacity = "0"; 
+                win.style.pointerEvents = "none"; 
+                win.style.filter = "blur(15px)"; 
+            });
+            document.querySelectorAll('.shoe').forEach(s => s.style.animationPlayState = 'running');
+        });
+
+        // INIT BOOT
+        initStars(); drawStars(); initTrack(trackIndex); drift();
         window.addEventListener('resize', initStars);
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
-        // --- WINDOW DRIFT ENGINE ---
-const windows = document.querySelectorAll('.window');
-let angle = 0;
-
-function drift() {
-    angle += 0.002;
-    windows.forEach((win, i) => {
-        // ONLY drift if the window is currently invisible (not being hovered/active)
-        if (win.style.opacity === "0") { 
-            const x = Math.sin(angle + i) * 15; 
-            const y = Math.cos(angle * 0.8 + i) * 10;
-            const initialRotate = win.style.transform.includes('rotate') 
-                ? win.style.transform.split('rotate(')[1].split(')')[0] 
-                : '0deg';
-            win.style.transform = `translate(${x}px, ${y}px) rotate(${initialRotate})`;
-        }
-    });
-    requestAnimationFrame(drift);
-}
-
-// Start the drift
-drift();
-
-        // --- THE SYSTEM TRANSITION ---
-const orbitContainer = document.querySelector('.orbit-container');
-const windows = document.querySelectorAll('.window');
-const brand = document.querySelector('.brand-watermark');
-
-/// Trigger the Fashion Section on Hover
-orbitContainer.addEventListener('mouseenter', () => {
-    brand.style.opacity = "0.02";
-    brand.style.transform = "scale(0.95)";
-    
-    windows.forEach((win) => {
-        win.style.opacity = "1"; 
-        win.style.pointerEvents = "auto"; 
-        win.style.filter = "blur(0px)"; 
-    });
-    
-    const shoes = document.querySelectorAll('.shoe');
-    shoes.forEach(s => s.style.animationPlayState = 'paused');
-});
-
-// Reset on Mouse Leave
-orbitContainer.addEventListener('mouseleave', () => {
-    brand.style.opacity = "0.1";
-    brand.style.transform = "scale(1)";
-    
-    windows.forEach(win => {
-        win.style.opacity = "0"; 
-        win.style.pointerEvents = "none"; 
-        win.style.filter = "blur(15px)"; 
-    });
-    
-    const shoes = document.querySelectorAll('.shoe');
-    shoes.forEach(s => s.style.animationPlayState = 'running');
-});
     </script>
 </body>
 </html>
