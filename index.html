@@ -56,7 +56,14 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
 
-        .window img { width: 100%; height: auto; filter: grayscale(1) brightness(0.8); transition: 0.8s; }
+        .window img { 
+    width: 100%; 
+    height: auto; 
+    filter: grayscale(1) brightness(0.8); 
+    transition: 0.8s; 
+    /* Fix for crisp industrial rendering */
+    image-rendering: -webkit-optimize-contrast; 
+}
         .window:hover img { filter: grayscale(0) brightness(1); }
 
         .window-meta { font-size: 7px; letter-spacing: 2px; padding: 12px; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; }
