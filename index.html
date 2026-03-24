@@ -6,71 +6,28 @@
     <title>WorldArch - System</title>
     <style>
         body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #0a0a0a; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            color: #fff; 
-            font-family: Helvetica, Arial, sans-serif; 
-            text-transform: uppercase; 
-            cursor: default;
+            margin: 0; overflow: hidden; background: #0a0a0a; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; color: #fff; font-family: Helvetica, Arial, sans-serif; 
+            text-transform: uppercase; cursor: crosshair;
         }
         
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Branding Layer */
+        /* Initial Branding */
         .brand-watermark { 
-            position: absolute; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            z-index: 1; 
-            text-align: center; 
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: absolute; z-index: 10; text-align: center; 
+            transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.1; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
-        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.05; margin-top: 10px; pointer-events: none; }
+        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.15; letter-spacing: -4px; line-height: 0.8; }
+        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.08; margin-top: 10px; }
 
-        /* Fashion Window System */
-        .window {
-            position: absolute;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            padding: 5px;
-            width: 280px;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-            opacity: 0; 
-            pointer-events: none;
-            filter: blur(15px);
+        /* Orbit Engine */
+        #orbitLayer { 
+            opacity: 0; transition: opacity 2s ease; pointer-events: none; 
+            position: relative; z-index: 50; width: 1px; height: 1px; 
         }
-
-        .window:hover {
-            z-index: 200;
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.08) !important;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-        }
-
-        .window img { 
-    width: 100%; 
-    height: auto; 
-    filter: grayscale(1) brightness(0.8); 
-    transition: 0.8s; 
-    /* Fix for crisp industrial rendering */
-    image-rendering: -webkit-optimize-contrast; 
-}
-        .window:hover img { filter: grayscale(0) brightness(1); }
-
-        .window-meta { font-size: 7px; letter-spacing: 2px; padding: 12px; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; }
-
-        /* Orbit Logic */
-        .orbit-container { position: relative; z-index: 50; width: 1px; height: 1px; }
-        .shoe { position: absolute; width: 220px; transition: 0.4s; cursor: pointer; transform-origin: center; margin-left: -110px; margin-top: -110px; opacity: 0.4; filter: grayscale(1); }
+        .shoe { position: absolute; width: 240px; transform-origin: center; margin-left: -120px; margin-top: -120px; opacity: 0.4; filter: grayscale(1); }
         .orbit { animation: orbit 25s linear infinite; }
         .delay-1 { animation-delay: -8.3s; }
         .delay-2 { animation-delay: -16.6s; }
@@ -80,149 +37,119 @@
             100% { transform: rotate(360deg) translateX(320px) rotate(-360deg); }
         }
 
-        /* Player HUD */
-        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 300; text-align: center; opacity: 0.2; transition: 0.5s; }
-        #heavyPlayer:hover { opacity: 1; }
-        #trackInfo { font-size: 8px; letter-spacing: 3px; margin-bottom: 12px; }
-        #progressBar { width: 100%; height: 1px; background: rgba(255,255,255,0.1); cursor: pointer; }
-        #progressFill { height: 100%; background: #fff; width: 0%; transition: width 0.1s linear; }
+        /* The Separate Fashion Archive (Overlay) */
+        #fashionArchive {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,10,10,0.98); z-index: 500;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px; padding: 100px 50px; overflow-y: auto;
+            opacity: 0; pointer-events: none; transition: 0.8s;
+            backdrop-filter: blur(30px);
+        }
+        #fashionArchive.active { opacity: 1; pointer-events: auto; }
 
-        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); padding: 10px 18px; cursor: pointer; font-size: 8px; letter-spacing: 3px; z-index: 300; transition: 0.3s; }
-        .ui-btn:hover { background: #fff; color: #000; opacity: 1; }
+        .archive-item { position: relative; border: 1px solid rgba(255,255,255,0.05); padding: 5px; transition: 0.5s; }
+        .archive-item:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-10px); }
+        .archive-item img { width: 100%; height: auto; filter: grayscale(1); transition: 0.5s; }
+        .archive-item:hover img { filter: grayscale(0); }
+        .archive-meta { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4); padding: 15px 5px; }
+
+        /* UI HUD */
+        #heavyPlayer { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); width: 260px; z-index: 600; text-align: center; opacity: 0; transition: 1.5s; }
+        .ui-btn { position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); padding: 10px 18px; cursor: pointer; font-size: 8px; letter-spacing: 3px; z-index: 600; opacity: 0; transition: 1.5s; }
         .left-btn { left: 30px; } .right-btn { right: 30px; }
+        #closeArchive { display: none; }
     </style>
 </head>
-<body>
+<body onclick="bootSystem()">
 
     <canvas id="starfield"></canvas>
 
     <div id="heavyPlayer">
-        <div id="trackInfo">HEAVY_SYSTEM // [ CLICK_TO_INIT ] // <span id="percent">00.0%</span></div>
-        <div id="progressBar" onclick="scrub(event)">
-            <div id="progressFill"></div>
-        </div>
+        <div id="trackInfo" style="font-size: 8px; letter-spacing: 3px; margin-bottom: 12px;">HEAVY_SYSTEM // ACTIVE</div>
+        <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1);"><div id="progressFill" style="height: 100%; background: #fff; width: 0%;"></div></div>
         <audio id="mainTrack"></audio>
     </div>
 
-    <div class="brand-watermark">
+    <button class="ui-btn left-btn" id="archiveToggle" onclick="toggleArchive(event)">ARCHIVE</button>
+    <button class="ui-btn right-btn" id="btnSupport">SUPPORT</button>
+
+    <div class="brand-watermark" id="bootLogo">
         <div class="main-title">WorldArch</div>
-        <div class="sub-title">Heavy Records</div>
+        <div class="sub-title" id="bootSub">Click to Initialize</div>
     </div>
 
-    <div class="window" style="top: 10%; left: 8%; transform: rotate(-3deg);">
-        <img src="fullpaint2.jpg">
-        <div class="window-meta"><span>UNIT: PAINT_02</span><span>STATUS: ARCHIVE</span></div>
-    </div>
-    <div class="window" style="top: 55%; right: 10%; transform: rotate(2deg);">
-        <img src="fefullwaleish2.jpg">
-        <div class="window-meta"><span>UNIT: WALEISH_02</span><span>STATUS: SAMPLED</span></div>
-    </div>
-    <div class="window" style="bottom: 15%; left: 25%; transform: rotate(-1deg);">
-        <img src="febottom.jpg">
-        <div class="window-meta"><span>UNIT: FE_BOTTOM</span><span>TYPE: TECH_SPEC</span></div>
+    <div id="orbitLayer">
+        <img src="majalperu.jpg" class="shoe orbit">
+        <img src="mafulljggng3.jpg" class="shoe orbit delay-1">
+        <img src="mafulljggng2.jpg" class="shoe orbit delay-2">
     </div>
 
-    <div class="orbit-container">
-        <img src="majalperu.jpg" class="shoe orbit" alt="01">
-        <img src="mafulljggng3.jpg" class="shoe orbit delay-1" alt="02">
-        <img src="mafulljggng2.jpg" class="shoe orbit delay-2" alt="03">
+    <div id="fashionArchive">
+        <div class="archive-item"><img src="majalperu.jpg"><div class="archive-meta">UNIT: PERU_01</div></div>
+        <div class="archive-item"><img src="mafulljggng.jpg"><div class="archive-meta">UNIT: JG_01</div></div>
+        <div class="archive-item"><img src="mafulljggng2.jpg"><div class="archive-meta">UNIT: JG_02</div></div>
+        <div class="archive-item"><img src="mafulljggng3.jpg"><div class="archive-meta">UNIT: JG_03</div></div>
+        <div class="archive-item"><img src="fullpaint.jpg"><div class="archive-meta">UNIT: PAINT_01</div></div>
+        <div class="archive-item"><img src="fullpaint2.jpg"><div class="archive-meta">UNIT: PAINT_02</div></div>
+        <div class="archive-item"><img src="fefullwaleish.jpg"><div class="archive-meta">UNIT: WALEISH_01</div></div>
+        <div class="archive-item"><img src="fefullwaleish2.jpg"><div class="archive-meta">UNIT: WALEISH_02</div></div>
+        <div class="archive-item"><img src="fefullcrop.jpg"><div class="archive-meta">UNIT: FE_CROP</div></div>
+        <div class="archive-item"><img src="febottom.jpg"><div class="archive-meta">UNIT: FE_BOTTOM</div></div>
     </div>
-
-    <button class="ui-btn left-btn">INQUIRY</button>
-    <button class="ui-btn right-btn">SUPPORT</button>
 
     <script>
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         const audio = document.getElementById('mainTrack');
-        const fill = document.getElementById('progressFill');
-        const trackInfoDiv = document.getElementById('trackInfo');
-        const windows = document.querySelectorAll('.window');
-        const orbitContainer = document.querySelector('.orbit-container');
-        const brand = document.querySelector('.brand-watermark');
+        const playlist = ["soul%20breaks.mp3", "iano%20choppers.mp3"];
+        
+        // BOOT SYSTEM
+        function bootSystem() {
+            document.getElementById('bootLogo').style.opacity = "0.02";
+            document.getElementById('bootSub').innerText = "System Active";
+            document.getElementById('orbitLayer').style.opacity = "1";
+            document.getElementById('heavyPlayer').style.opacity = "0.2";
+            document.getElementById('archiveToggle').style.opacity = "1";
+            document.getElementById('btnSupport').style.opacity = "1";
+            
+            audio.src = playlist[0];
+            audio.play();
+            document.body.onclick = null; // Kill the boot click
+        }
 
-        const playlist = ["(Instrumental).mp3", "ty who 2 (Mashup).mp3", "Bubbles.mp3", "soul breaks.mp3", "iano choppers.mp3"];
-        let trackIndex = 0;
+        // TOGGLE FASHION SEPARATELY
+        function toggleArchive(e) {
+            e.stopPropagation(); // Stop click from triggering other things
+            const archive = document.getElementById('fashionArchive');
+            const btn = document.getElementById('archiveToggle');
+            
+            if(archive.classList.contains('active')) {
+                archive.classList.remove('active');
+                btn.innerText = "ARCHIVE";
+                document.getElementById('orbitLayer').style.opacity = "1";
+            } else {
+                archive.classList.add('active');
+                btn.innerText = "CLOSE";
+                document.getElementById('orbitLayer').style.opacity = "0";
+            }
+        }
 
-        // STARFIELD
+        // STARFIELD ENGINE
         let stars = [];
         function initStars() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             stars = [];
-            for(let i=0; i<200; i++) { stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.3 }); }
+            for(let i=0; i<150; i++) { stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.15 }); }
         }
         function drawStars() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            stars.forEach(s => {
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-                s.y += s.speed; if(s.y > canvas.height) s.y = 0;
-            });
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y > canvas.height) s.y = 0; });
             requestAnimationFrame(drawStars);
         }
 
-        // PLAYER
-        function initTrack(i) {
-            audio.src = playlist[i];
-            const displayName = playlist[i].replace('.mp3', '').toUpperCase();
-            trackInfoDiv.innerHTML = `HEAVY_SYSTEM // ${displayName} // STATUS: ACTIVE // <span id="percent">00.0%</span>`;
-            audio.load();
-        }
-        audio.onended = () => { trackIndex = (trackIndex + 1) % playlist.length; initTrack(trackIndex); setTimeout(() => { audio.play(); }, 200); };
-        audio.ontimeupdate = () => {
-            if (audio.duration) {
-                const p = (audio.currentTime / audio.duration) * 100;
-                fill.style.width = p + '%';
-                document.getElementById('percent').innerText = p.toFixed(1) + '%';
-            }
-        };
-        function scrub(e) {
-            const rect = document.getElementById('progressBar').getBoundingClientRect();
-            audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
-            audio.play();
-        }
-
-        // DRIFT ENGINE
-        let angle = 0;
-        function drift() {
-            angle += 0.002;
-            windows.forEach((win, i) => {
-                if (win.style.opacity === "0" || win.style.opacity === "") {
-                    const x = Math.sin(angle + i) * 15; 
-                    const y = Math.cos(angle * 0.8 + i) * 10;
-                    const initialRotate = win.style.transform.includes('rotate') 
-                        ? win.style.transform.split('rotate(')[1].split(')')[0] : '0deg';
-                    win.style.transform = `translate(${x}px, ${y}px) rotate(${initialRotate})`;
-                }
-            });
-            requestAnimationFrame(drift);
-        }
-
-        // TRANSITION
-        orbitContainer.addEventListener('mouseenter', () => {
-            brand.style.opacity = "0.02";
-            windows.forEach(win => {
-                win.style.opacity = "1"; 
-                win.style.pointerEvents = "auto"; 
-                win.style.filter = "blur(0px)"; 
-            });
-            document.querySelectorAll('.shoe').forEach(s => s.style.animationPlayState = 'paused');
-        });
-
-        orbitContainer.addEventListener('mouseleave', () => {
-            brand.style.opacity = "0.1";
-            windows.forEach(win => {
-                win.style.opacity = "0"; 
-                win.style.pointerEvents = "none"; 
-                win.style.filter = "blur(15px)"; 
-            });
-            document.querySelectorAll('.shoe').forEach(s => s.style.animationPlayState = 'running');
-        });
-
-        // INIT BOOT
-        initStars(); drawStars(); initTrack(trackIndex); drift();
+        initStars(); drawStars();
         window.addEventListener('resize', initStars);
-        document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
     </script>
 </body>
 </html>
