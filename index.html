@@ -155,6 +155,29 @@
         initStars(); drawStars(); initTrack(trackIndex);
         window.addEventListener('resize', initStars);
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once: true});
+        // --- WINDOW DRIFT ENGINE ---
+const windows = document.querySelectorAll('.window');
+let angle = 0;
+
+function drift() {
+    angle += 0.002; // Control speed here
+    windows.forEach((win, i) => {
+        // Each window moves in a slightly different floating pattern
+        const x = Math.sin(angle + i) * 15; 
+        const y = Math.cos(angle * 0.8 + i) * 10;
+        
+        // We preserve the initial rotation you set in the inline styles
+        const initialRotate = win.style.transform.includes('rotate') 
+            ? win.style.transform.split('rotate(')[1].split(')')[0] 
+            : '0deg';
+            
+        win.style.transform = `translate(${x}px, ${y}px) rotate(${initialRotate})`;
+    });
+    requestAnimationFrame(drift);
+}
+
+// Start the drift
+drift();
     </script>
 </body>
 </html>
