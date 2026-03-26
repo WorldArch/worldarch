@@ -146,6 +146,141 @@
     <button class="close-archive" id="closeBtn" onclick="exitFashion()">CLOSE_SYSTEM</button>
 
     <script>
+
+
+        <script>
+    // --- DYNAMIC REPO CONFIG ---
+    const GITHUB_USER = 'YOUR_GITHUB_USERNAME'; 
+    const GITHUB_REPO = 'YOUR_REPO_NAME';
+    const MUSIC_FOLDER = ''; // Leave empty if mp3s are in the root folder
+
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    const audio = document.getElementById('mainTrack');
+    
+    let playlist = []; 
+    let trackIndex = 0;
+    let isBooted = false;
+
+    // 1. BOOT SYSTEM: Fetches the file list from GitHub API
+    async function bootSystem() {
+        if (isBooted) return;
+        isBooted = true;
+
+        try {
+            const apiURL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${MUSIC_FOLDER}`;
+            const response = await fetch(apiURL);
+            const files = await response.json();
+            
+            // Filter only audio files and store their download URLs
+            playlist = files
+                .filter(file => file.name.endsWith('.mp3') || file.name.endsWith('.wav'))
+                .map(file => file.download_url);
+
+            if (playlist.length > 0) {
+                // Trigger Visuals
+                document.getElementById('logo').style.opacity = "0.02";
+                document.getElementById('hubLayer').classList.add('visible');
+                document.getElementById('heavyHUD').classList.add('visible');
+                document.getElementById('navSidebar').classList.add('visible');
+                
+                loadTrack(0);
+            } else {
+                document.getElementById('trackName').innerText = "SYSTEM_ERROR // NO_AUDIO_FILES";
+            }
+        } catch (err) {
+            console.error("Connection Failed:", err);
+            document.getElementById('trackName').innerText = "SYSTEM_ERROR // API_OFFLINE";
+        }
+        
+        document.body.onclick = null; 
+    }
+
+    // 2. PLAYER ENGINE: Handles track loading and display
+    function loadTrack(index) {
+        trackIndex = index;
+        if (trackIndex < 0) trackIndex = playlist.length - 1;
+        if (trackIndex >= playlist.length) trackIndex = 0;
+        
+        audio.src = playlist[trackIndex];
+        
+        // Clean up the name for the HUD (Removes extension and %20)
+        const fileName = playlist[trackIndex].split('/').pop();
+        const displayName = decodeURIComponent(fileName)
+            .replace(/\.[^/.]+$/, "")
+            .toUpperCase();
+            
+        document.getElementById('trackName').innerText = `HEAVY_SYSTEM // ${displayName}`;
+        audio.play();
+        document.getElementById('playPause').innerText = "STOP";
+    }
+
+    // 3. AUTO-PLAY NEXT
+    audio.onended = () => { changeTrack(1); };
+
+    function togglePlay() {
+        if (audio.paused) { 
+            audio.play(); 
+            document.getElementById('playPause').innerText = "STOP"; 
+        } else { 
+            audio.pause(); 
+            document.getElementById('playPause').innerText = "PLAY"; 
+        }
+    }
+
+    function changeTrack(dir) { loadTrack(trackIndex + dir); }
+
+    // 4. PROGRESS BAR LOGIC
+    audio.ontimeupdate = () => {
+        if (audio.duration) {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progress').style.width = pct + "%";
+        }
+    };
+
+    // 5. NAVIGATION LOGIC
+    function enterFashion() {
+        document.getElementById('fashionOverlay').classList.add('active');
+        document.getElementById('closeBtn').classList.add('visible');
+        document.getElementById('hubLayer').style.opacity = "0";
+    }
+
+    function exitFashion() {
+        document.getElementById('fashionOverlay').classList.remove('active');
+        document.getElementById('closeBtn').classList.remove('visible');
+        document.getElementById('hubLayer').style.opacity = "0.35";
+    }
+
+    // 6. STARFIELD ENGINE
+    let stars = [];
+    function initStars() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        stars = [];
+        for(let i=0; i<150; i++) { 
+            stars.push({ 
+                x: Math.random()*canvas.width, 
+                y: Math.random()*canvas.height, 
+                size: Math.random()*1.2, 
+                speed: Math.random()*0.1 
+            }); 
+        }
+    }
+    function drawStars() {
+        ctx.clearRect(0,0,canvas.width,canvas.height); 
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        stars.forEach(s => { 
+            ctx.beginPath(); 
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
+            ctx.fill(); 
+            s.y += s.speed; 
+            if(s.y > canvas.height) s.y = 0; 
+        });
+        requestAnimationFrame(drawStars);
+    }
+
+    initStars(); drawStars();
+    window.onresize = initStars;
+</script>
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         const audio = document.getElementById('mainTrack');
