@@ -14,11 +14,7 @@
         
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Initial Branding */
-        .brand-watermark { 
-            position: absolute; z-index: 10; text-align: center; 
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .brand-watermark { position: absolute; z-index: 10; text-align: center; transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .main-title { font-weight: 900; font-size: 8vw; opacity: 0.1; letter-spacing: -4px; line-height: 0.8; pointer-events: none; }
 
         /* Left Navigation */
@@ -30,20 +26,13 @@
         }
         #navSidebar.reveal { opacity: 1; transform: translateX(0); }
 
-        .nav-unit { 
-            width: 70px; height: 100px; border: 1px solid rgba(255,255,255,0.05); 
-            overflow: hidden; transition: 0.4s; cursor: pointer;
-        }
+        .nav-unit { width: 70px; height: 100px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; transition: 0.4s; cursor: pointer; }
         .nav-unit:hover { border-color: #fff; transform: scale(1.05); }
         .nav-unit img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) brightness(0.3); transition: 0.5s; }
         .nav-unit:hover img { filter: grayscale(0) brightness(1); }
 
         /* Central Orbit Hub */
-        #hubLayer { 
-            opacity: 0; transition: opacity 1.5s ease; pointer-events: auto; 
-            position: relative; z-index: 50; width: 600px; height: 600px; 
-            display: flex; justify-content: center; align-items: center;
-        }
+        #hubLayer { opacity: 0; transition: opacity 1.5s ease; position: relative; z-index: 50; width: 600px; height: 600px; display: flex; justify-content: center; align-items: center; }
         .shoe { position: absolute; width: 220px; opacity: 0.35; filter: grayscale(1); pointer-events: none; }
         .orbit { animation: orbit 30s linear infinite; }
         .delay-1 { animation-delay: -10s; }
@@ -55,10 +44,7 @@
         }
 
         /* Player UI */
-        #heavyHUD { 
-            position: fixed; top: 40px; left: 50%; transform: translateX(-50%); 
-            z-index: 600; opacity: 0; transition: 1s; text-align: center; min-width: 300px;
-        }
+        #heavyHUD { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 600; opacity: 0; transition: 1s; text-align: center; min-width: 300px; }
         .player-status { font-size: 8px; letter-spacing: 4px; color: rgba(255,255,255,0.3); margin-bottom: 10px; }
         .player-controls { display: flex; justify-content: center; gap: 25px; margin-top: 15px; }
         .p-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 10px; cursor: pointer; transition: 0.3s; }
@@ -78,11 +64,7 @@
         .fashion-unit img { width: 100%; filter: grayscale(1); transition: 0.8s; }
         .fashion-unit:hover img { filter: grayscale(0); }
 
-        .close-archive { 
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            border: 1px solid #fff; background: none; color: #fff; padding: 12px 30px;
-            font-size: 8px; letter-spacing: 5px; cursor: pointer; z-index: 800; opacity: 0; transition: 0.5s;
-        }
+        .close-archive { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); border: 1px solid #fff; background: none; color: #fff; padding: 12px 30px; font-size: 8px; letter-spacing: 5px; cursor: pointer; z-index: 800; opacity: 0; transition: 0.5s; }
         .visible { opacity: 1 !important; }
     </style>
 </head>
@@ -112,134 +94,3 @@
     </div>
 
     <div id="hubLayer">
-        <img src="majalperu.jpg" class="shoe orbit">
-        <img src="mafulljggng3.jpg" class="shoe orbit delay-1">
-        <img src="mafulljggng2.jpg" class="shoe orbit delay-2">
-    </div>
-
-    <div id="fashionOverlay">
-        <div class="fashion-grid">
-            <div class="fashion-unit"><img src="fefullwaleish2.jpg"></div>
-            <div class="fashion-unit"><img src="fullpaint2.jpg"></div>
-            <div class="fashion-unit"><img src="fefullcrop.jpg"></div>
-            <div class="fashion-unit"><img src="febottom.jpg"></div>
-            <div class="fashion-unit"><img src="majalperu.jpg"></div>
-            <div class="fashion-unit"><img src="mafulljggng.jpg"></div>
-            <div class="fashion-unit"><img src="Gemini_Generated_Image_gk8a6kgk8a6kgk8a.png"></div>
-            <div class="fashion-unit"><img src="SM-01.jpg"></div>
-            <div class="fashion-unit"><img src="VC-01.jpg"></div>
-            <div class="fashion-unit"><img src="fefullcrop.jpg"></div>
-            <div class="fashion-unit"><img src="fefullwaleish.jpg"></div>
-            <div class="fashion-unit"><img src="fefullwaleish2.jpg"></div>
-            <div class="fashion-unit"><img src="fullpaint.jpg"></div>
-        </div>
-    </div>
-
-    <button class="close-archive" id="closeBtn" onclick="exitFashion()">CLOSE_SYSTEM</button>
-
-    <script>
-        // --- CONFIG ---
-        const GITHUB_USER = 'YOUR_GITHUB_USERNAME'; 
-        const GITHUB_REPO = 'YOUR_REPO_NAME';
-        const MUSIC_FOLDER = ''; 
-
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
-        const audio = document.getElementById('mainTrack');
-        const sidebar = document.getElementById('navSidebar');
-        
-        let playlist = []; 
-        let trackIndex = 0;
-        let isBooted = false;
-
-        async function bootSystem() {
-            if (isBooted) return;
-            isBooted = true;
-
-            try {
-                const apiURL = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${MUSIC_FOLDER}`;
-                const response = await fetch(apiURL);
-                const files = await response.json();
-                
-                playlist = files
-                    .filter(f => f.name.endsWith('.mp3') || f.name.endsWith('.wav'))
-                    .map(f => f.download_url);
-
-                if (playlist.length > 0) {
-                    document.getElementById('logo').style.opacity = "0.02";
-                    document.getElementById('hubLayer').classList.add('visible');
-                    document.getElementById('heavyHUD').classList.add('visible');
-                    loadTrack(0);
-                } else {
-                    document.getElementById('trackName').innerText = "SYSTEM_ERROR // NO_AUDIO";
-                }
-            } catch (err) {
-                document.getElementById('trackName').innerText = "SYSTEM_ERROR // API_OFFLINE";
-            }
-            document.body.onclick = null;
-        }
-
-        function handleMouseMove() {
-            if (isBooted) {
-                sidebar.classList.add('reveal');
-                clearTimeout(window.navTimeout);
-                window.navTimeout = setTimeout(() => sidebar.classList.remove('reveal'), 3000);
-            }
-        }
-
-        function loadTrack(index) {
-            trackIndex = (index + playlist.length) % playlist.length;
-            audio.src = playlist[trackIndex];
-            const fileName = playlist[trackIndex].split('/').pop();
-            const displayName = decodeURIComponent(fileName).replace(/\.[^/.]+$/, "").toUpperCase();
-            document.getElementById('trackName').innerText = `HEAVY_SYSTEM // ${displayName}`;
-            audio.play();
-            document.getElementById('playPause').innerText = "STOP";
-        }
-
-        audio.onended = () => changeTrack(1);
-
-        function togglePlay() {
-            if (audio.paused) { audio.play(); document.getElementById('playPause').innerText = "STOP"; }
-            else { audio.pause(); document.getElementById('playPause').innerText = "PLAY"; }
-        }
-
-        function changeTrack(dir) { loadTrack(trackIndex + dir); }
-
-        audio.ontimeupdate = () => {
-            if(audio.duration) {
-                const pct = (audio.currentTime / audio.duration) * 100;
-                document.getElementById('progress').style.width = pct + "%";
-            }
-        };
-
-        function enterFashion() {
-            document.getElementById('fashionOverlay').classList.add('active');
-            document.getElementById('closeBtn').classList.add('visible');
-            document.getElementById('hubLayer').style.opacity = "0";
-        }
-
-        function exitFashion() {
-            document.getElementById('fashionOverlay').classList.remove('active');
-            document.getElementById('closeBtn').classList.remove('visible');
-            document.getElementById('hubLayer').style.opacity = "0.35";
-        }
-
-        // STARFIELD
-        let stars = [];
-        function initStars() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = [];
-            for(let i=0; i<150; i++) { stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.1 }); }
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y > canvas.height) s.y = 0; });
-            requestAnimationFrame(drawStars);
-        }
-
-        initStars(); drawStars();
-        window.onresize = initStars;
-    </script>
-</body>
-</html>
