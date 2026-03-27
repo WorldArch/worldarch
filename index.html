@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WorldArch - System</title>
     <style>
-        /* --- BASE SYSTEM --- */
+        /* --- CORE SYSTEM --- */
         body { 
             margin: 0; overflow: hidden; background: #0a0a0a; 
             display: flex; justify-content: center; align-items: center; 
@@ -119,4 +119,155 @@
             <p><strong>ENTITY:</strong> IKENNA // DESIGN ARCHITECT</p>
             <p><strong>FOCUS:</strong> BRUTALIST_MINIMALISM</p>
             <p><strong>MEDIUM:</strong> CONCEPTUAL_FOOTWEAR // HEAVY_SONICS</p>
-            <p><strong>ACTIVE_RESEARCH:</strong> TECHNICAL_SNEAKER_FUSION [NIKE_MAX / NB_99X], HIGH_PERFORMANCE_MATERIALS [RIPSTOP / GORE-TEX], SUB_BASS_ENGINE
+            <p><strong>ACTIVE_RESEARCH:</strong> TECHNICAL_SNEAKER_FUSION [NIKE_MAX / NB_99X], HIGH_PERFORMANCE_MATERIALS [RIPSTOP / GORE-TEX], SUB_BASS_ENGINEERING [SP-404_SAMPLING].</p>
+            <p><strong>KINETICS:</strong> COLLEGIATE_ATHLETICS [BASKETBALL_LEGACY]</p>
+        </div>
+    </div>
+
+    <div id="contactOverlay" class="system-overlay">
+        <div class="manifesto-content">
+            <h2>COMMS_PROTOCOL</h2>
+            <p>FOR PROJECT INQUIRIES OR SONIC COLLABORATION:</p>
+            <p><a href="mailto:CONTACT@WORLDARCH.SYSTEM" style="color:#fff;">CONTACT@WORLDARCH.SYSTEM</a></p>
+            <p>INSTAGRAM: <a href="https://instagram.com/YOUR_HANDLE" target="_blank" style="color:#fff;">@YOUR_HANDLE</a></p>
+        </div>
+    </div>
+
+    <button class="close-btn" id="closeBtn" onclick="closeAll()">CLOSE_SYSTEM</button>
+
+    <script>
+        // 1. CONFIGURATION
+        const GITHUB_USER = 'YOUR_GITHUB_USERNAME'; 
+        const GITHUB_REPO = 'YOUR_REPO_NAME';
+        const IMAGES = ['fefullwaleish2.jpg', 'fullpaint2.jpg', 'fefullcrop.jpg', 'febottom.jpg', 'majalperu.jpg'];
+
+        // 2. SYSTEM VARIABLES
+        const audio = document.getElementById('mainTrack');
+        const playStopBtn = document.getElementById('playStopBtn');
+        const navSidebar = document.getElementById('navSidebar');
+        let playlist = []; 
+        let trackIndex = 0; 
+        let isBooted = false;
+        let navTimeout;
+
+        // 3. CORE FUNCTIONS
+        async function bootSystem() {
+            if (isBooted) return; 
+            isBooted = true;
+            
+            try {
+                const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`);
+                const files = await res.json();
+                
+                playlist = files.filter(f => f.name.toLowerCase().endsWith('.mp3')).map(f => f.download_url);
+                
+                if (playlist.length > 0) { 
+                    loadTrack(0); 
+                    document.getElementById('heavyHUD').classList.add('visible'); 
+                }
+                
+                document.getElementById('hubLayer').style.opacity = "0.35";
+                loadGrid();
+                
+            } catch (e) { 
+                document.getElementById('trackName').innerText = "SYSTEM_OFFLINE"; 
+            }
+        }
+
+        function revealNav() {
+            if (!isBooted) return;
+            navSidebar.classList.add('reveal');
+            clearTimeout(navTimeout); 
+            navTimeout = setTimeout(() => {
+                navSidebar.classList.remove('reveal');
+            }, 3000);
+        }
+
+        function loadGrid() {
+            const grid = document.getElementById('gridIn');
+            grid.innerHTML = ''; 
+            IMAGES.forEach(src => {
+                const div = document.createElement('div'); 
+                div.className = 'fashion-unit';
+                div.innerHTML = `<img src="${src}" onerror="this.src='https://via.placeholder.com/300?text=IMAGE_NOT_FOUND'">`; 
+                grid.appendChild(div);
+            });
+        }
+
+        function loadTrack(i) {
+            trackIndex = (i + playlist.length) % playlist.length;
+            audio.src = playlist[trackIndex];
+            const name = decodeURIComponent(playlist[trackIndex].split('/').pop()).replace('.mp3','').toUpperCase();
+            document.getElementById('trackName').innerText = `HEAVY_SYSTEM // ${name}`;
+            audio.play(); 
+            playStopBtn.innerText = "STOP";
+        }
+
+        function toggleStop() {
+            if (audio.paused) { 
+                audio.play(); 
+                playStopBtn.innerText = "STOP"; 
+            } else { 
+                audio.pause(); 
+                audio.currentTime = 0; 
+                playStopBtn.innerText = "PLAY"; 
+                document.getElementById('progress').style.width = "0%"; 
+            }
+        }
+
+        function changeTrack(d) { loadTrack(trackIndex + d); }
+        
+        audio.ontimeupdate = () => { 
+            if(audio.duration) {
+                document.getElementById('progress').style.width = (audio.currentTime/audio.duration*100) + "%"; 
+            }
+        };
+
+        function openLayer(id) {
+            closeAll(); 
+            document.getElementById(id).classList.add('active');
+            document.getElementById('closeBtn').classList.add('visible');
+            document.getElementById('hubLayer').style.opacity = "0";
+        }
+
+        function closeAll() {
+            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
+            document.getElementById('closeBtn').classList.remove('visible');
+            if(isBooted) document.getElementById('hubLayer').style.opacity = "0.35";
+        }
+
+        // 4. STARFIELD ENGINE
+        const canvas = document.getElementById('starfield'); 
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight;
+            stars = Array(150).fill().map(() => ({ 
+                x: Math.random()*canvas.width, 
+                y: Math.random()*canvas.height, 
+                s: Math.random()*1.2, 
+                v: Math.random()*0.15 
+            }));
+        }
+
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); 
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            stars.forEach(p => { 
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.s, 0, 7); 
+                ctx.fill(); 
+                p.y += p.v; 
+                if(p.y > canvas.height) p.y = 0; 
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        initStars(); 
+        drawStars(); 
+        window.onresize = initStars;
+    </script>
+</body>
+</html>
