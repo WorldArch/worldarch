@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WorldArch - HEAVY_SYSTEM</title>
+    <title>WorldArch - System</title>
     
     <script>
-        // --- 1. SYSTEM CONFIG ---
-        const GITHUB_USER = 'worldarch'; // Update if your username changed
-        const GITHUB_REPO = '24worldarch'; 
-        const IMAGES = ['SM-01.jpg', 'VC-01.jpg', 'majalperu.jpg'];
+        /* --- 1. SYSTEM CONFIG --- */
+        const GITHUB_USER = 'worldarch'; 
+        const GITHUB_REPO = 'worldarch'; // Verified: worldarch/worldarch
 
         let audio, playStopBtn, playlist = [], trackIndex = 0, isBooted = false;
 
-        // --- 2. THE AUDIO ENGINE ---
+        /* --- 2. THE ENGINE --- */
         window.bootSystem = async function() {
             if (isBooted) return; 
             isBooted = true;
@@ -21,19 +20,24 @@
             audio = document.getElementById('mainTrack');
             
             // Interaction Unlock
-            audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(e => console.log("Unlock required"));
+            audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(e => console.log("User Gesture Required"));
 
             try {
+                // Fetching from the root of worldarch/worldarch
                 const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`);
                 const files = await res.json();
+                
+                // Filter for any mp3 files in the repo
                 playlist = files.filter(f => f.name.toLowerCase().endsWith('.mp3')).map(f => f.download_url);
                 
                 if (playlist.length > 0) { 
                     loadTrack(0); 
                     document.getElementById('heavyHUD').classList.add('visible'); 
                 }
-                document.getElementById('hubLayer').style.opacity = "0.35";
-            } catch (e) { console.error("OFFLINE_MODE_ACTIVE"); }
+                document.getElementById('hubLayer').style.opacity = "0.45";
+            } catch (e) { 
+                console.error("BOOT_ERROR: If music fails, ensure repo is PUBLIC."); 
+            }
         };
 
         window.loadTrack = function(i) {
@@ -41,20 +45,28 @@
             trackIndex = (i + playlist.length) % playlist.length;
             audio.src = playlist[trackIndex];
             const name = decodeURIComponent(playlist[trackIndex].split('/').pop()).replace('.mp3', '').toUpperCase();
-            document.getElementById('trackName').innerText = `HEAVY_SYSTEM // ${name}`;
+            document.getElementById('trackName').innerText = `SYSTEM // ${name}`;
             audio.load();
             audio.play();
-            if (playStopBtn) playStopBtn.innerText = "STOP";
+            playStopBtn.innerText = "STOP";
         };
 
         window.toggleStop = function() {
-            if (audio.paused) { audio.play(); playStopBtn.innerText = "STOP"; }
-            else { audio.pause(); audio.currentTime = 0; playStopBtn.innerText = "PLAY"; document.getElementById('progress').style.width = "0%"; }
+            if (audio.paused) { 
+                audio.play(); 
+                playStopBtn.innerText = "STOP"; 
+            } else { 
+                // Hard Stop Logic
+                audio.pause(); 
+                audio.currentTime = 0; 
+                playStopBtn.innerText = "PLAY"; 
+                document.getElementById('progress').style.width = "0%"; 
+            }
         };
 
         window.changeTrack = function(d) { loadTrack(trackIndex + d); };
 
-        // --- 3. UI OVERLAYS ---
+        /* --- 3. UI OVERLAYS --- */
         window.openLayer = function(id) {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -65,18 +77,28 @@
         window.closeAll = function() {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
             document.getElementById('closeBtn').classList.remove('visible');
-            if(isBooted) document.getElementById('hubLayer').style.opacity = "0.35";
+            if(isBooted) document.getElementById('hubLayer').style.opacity = "0.45";
         };
 
+        /* --- 4. STARFIELD VISUALS --- */
         window.onload = () => {
             playStopBtn = document.getElementById('playStopBtn');
             const canvas = document.getElementById('starfield');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            let stars = Array(150).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.2, v: Math.random()*0.15 }));
+            let stars = Array(150).fill().map(() => ({ 
+                x: Math.random()*canvas.width, 
+                y: Math.random()*canvas.height, 
+                s: Math.random()*1.5, 
+                v: Math.random()*0.2 
+            }));
             function draw() {
-                ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                stars.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill(); p.y += p.v; if(p.y > canvas.height) p.y = 0; });
+                ctx.clearRect(0,0,canvas.width,canvas.height); 
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                stars.forEach(p => { 
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill(); 
+                    p.y += p.v; if(p.y > canvas.height) p.y = 0; 
+                });
                 requestAnimationFrame(draw);
             }
             draw();
@@ -84,39 +106,41 @@
     </script>
 
     <style>
-        body { margin: 0; overflow: hidden; background: #0a0a0a; color: #fff; font-family: 'Helvetica', Arial, sans-serif; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { margin: 0; overflow: hidden; background: #080808; color: #fff; font-family: 'Helvetica', Arial, sans-serif; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; }
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
-        /* BRANDING */
-        .brand-watermark { position: absolute; text-align: center; z-index: 2; pointer-events: none; }
-        .main-title { font-weight: 900; font-size: 8vw; opacity: 0.1; letter-spacing: -4px; line-height: 0.8; }
-        .sub-title { font-size: 1vw; letter-spacing: 12px; opacity: 0.05; margin-top: 10px; }
-
-        /* HUD */
+        /* HUD - PLAYER */
         #heavyHUD { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; opacity: 0; transition: 1s; min-width: 300px; }
         #heavyHUD.visible { opacity: 1; }
-        .p-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 9px; cursor: pointer; margin: 0 10px; letter-spacing: 2px; }
+        .p-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 10px; cursor: pointer; margin: 0 12px; letter-spacing: 4px; font-weight: 900; }
+        .p-btn:hover { color: #fff; }
 
-        /* NAV */
-        #navSidebar { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 500; }
-        .nav-unit { width: 60px; height: 80px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; font-size: 8px; color: rgba(255,255,255,0.4); }
-        .nav-unit:hover { border-color: #fff; color: #fff; }
+        /* SIDE NAV */
+        #navSidebar { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; z-index: 500; }
+        .nav-unit { width: 120px; height: 35px; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: 3px; color: rgba(255,255,255,0.5); transition: 0.2s; }
+        .nav-unit:hover { border-color: #fff; color: #000; background: #fff; }
 
-        /* ORBIT */
-        #hubLayer { opacity: 0; transition: 1.5s; position: relative; z-index: 10; display: flex; justify-content: center; align-items: center; width: 500px; height: 500px; }
-        .shoe { position: absolute; width: 160px; opacity: 0.35; filter: grayscale(1); pointer-events: none; }
-        .orbit { animation: orbit 20s linear infinite; }
-        .delay-1 { animation-delay: -10s; }
-        @keyframes orbit { 0% { transform: rotate(0deg) translateX(200px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); } }
+        /* BRANDING & ORBIT */
+        .brand-watermark { position: absolute; text-align: center; z-index: 2; pointer-events: none; }
+        .main-title { font-weight: 900; font-size: 9vw; opacity: 0.07; letter-spacing: -5px; line-height: 0.8; }
+        
+        #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; display: flex; justify-content: center; align-items: center; width: 500px; height: 500px; }
+        .shoe { position: absolute; width: 180px; filter: grayscale(1) brightness(0.8); pointer-events: none; }
+        .orbit { animation: orbit 25s linear infinite; }
+        .d1 { animation-delay: -8.3s; }
+        .d2 { animation-delay: -16.6s; }
+        @keyframes orbit { 
+            0% { transform: rotate(0deg) translateX(220px) rotate(0deg); } 
+            100% { transform: rotate(360deg) translateX(220px) rotate(-360deg); } 
+        }
 
         /* OVERLAYS */
-        .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.98); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.5s; backdrop-filter: blur(40px); }
+        .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8,8,8,0.99); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s; backdrop-filter: blur(50px); }
         .system-overlay.active { opacity: 1; pointer-events: auto; }
-        .content-box { width: 80%; max-width: 500px; text-align: left; line-height: 2; font-size: 10px; letter-spacing: 2px; }
+        .content-box { width: 85%; max-width: 550px; text-align: left; line-height: 2.8; font-size: 11px; letter-spacing: 4px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; }
         
-        .close-btn { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); border: 1px solid #fff; background: #000; color: #fff; padding: 15px 40px; font-size: 8px; letter-spacing: 5px; cursor: pointer; z-index: 3000; opacity: 0; transition: 0.5s; pointer-events: none; }
+        .close-btn { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); border: 1px solid #fff; background: #000; color: #fff; padding: 18px 50px; font-size: 9px; letter-spacing: 6px; cursor: pointer; z-index: 3000; opacity: 0; transition: 0.4s; pointer-events: none; }
         .close-btn.visible { opacity: 1; pointer-events: auto; }
-        a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2); }
     </style>
 </head>
 <body onclick="bootSystem()">
@@ -125,46 +149,38 @@
 
     <div class="brand-watermark">
         <div class="main-title">WorldArch</div>
-        <div class="sub-title">Heavy Records</div>
     </div>
 
     <div id="heavyHUD">
-        <div id="trackName" style="font-size: 8px; color: rgba(255,255,255,0.3); margin-bottom: 8px;">HEAVY_SYSTEM // IDLE</div>
-        <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1);"><div id="progress" style="width: 0%; height: 100%; background: #fff;"></div></div>
-        <div style="margin-top: 15px;">
-            <button class="p-btn" onclick="changeTrack(-1)">BACK</button>
-            <button class="p-btn" id="playStopBtn" onclick="toggleStop()">STOP</button>
-            <button class="p-btn" onclick="changeTrack(1)">FORWARD</button>
+        <div id="trackName">HEAVY_SYSTEM // IDLE</div>
+        <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-top: 10px;">
+            <div id="progress" style="width: 0%; height: 100%; background: #fff; transition: 0.1s;"></div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="p-btn" onclick="changeTrack(-1)">REW</button>
+            <button class="p-btn" id="playStopBtn" onclick="toggleStop()">PLAY</button>
+            <button class="p-btn" onclick="changeTrack(1)">FWD</button>
         </div>
         <audio id="mainTrack" ontimeupdate="if(this.duration) document.getElementById('progress').style.width = (this.currentTime/this.duration*100) + '%'"></audio>
     </div>
 
     <div id="navSidebar">
-        <div class="nav-unit" onclick="openLayer('aboutOverlay')">BIO</div>
-        <div class="nav-unit" onclick="openLayer('contactOverlay')">COMMS</div>
+        <div class="nav-unit" onclick="openLayer('fashionBox')">FASHION</div>
+        <div class="nav-unit" onclick="openLayer('artBox')">ART</div>
+        <div class="nav-unit" onclick="openLayer('collectionBox')">COLLECTION</div>
+        <div class="nav-unit" onclick="openLayer('designBox')">DESIGN</div>
     </div>
 
     <div id="hubLayer">
-        <img src="SM-01.jpg" class="shoe orbit">
-        <img src="VC-01.jpg" class="shoe orbit delay-1">
+        <img src="SM-01.jpg" class="shoe orbit" onerror="this.style.display='none'">
+        <img src="VC-01.jpg" class="shoe orbit d1" onerror="this.style.display='none'">
+        <img src="majalperu.jpg" class="shoe orbit d2" onerror="this.style.display='none'">
     </div>
 
-    <div id="aboutOverlay" class="system-overlay">
-        <div class="content-box">
-            <h2 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">MANIFESTO_001</h2>
-            <p><strong>ENTITY:</strong> IKENNA // ARCHITECT</p>
-            <p><strong>FOCUS:</strong> BRUTALIST MINIMALISM</p>
-            <p><strong>ACTIVE:</strong> SNEAKER FUSION // HEAVY SONICS</p>
-        </div>
-    </div>
-
-    <div id="contactOverlay" class="system-overlay">
-        <div class="content-box">
-            <h2>COMMS_PROTOCOL</h2>
-            <p>INSTAGRAM: <a href="https://instagram.com/worldarch" target="_blank">@WORLDARCH</a></p>
-            <p>EMAIL: CONTACT@WORLDARCH.SYSTEM</p>
-        </div>
-    </div>
+    <div id="fashionBox" class="system-overlay"><div class="content-box"><h2>[ FASHION ]</h2>- TECHNICAL OUTERWEAR<br>- ANATOMICAL PANELING<br>- UTILITY FABRICATION</div></div>
+    <div id="artBox" class="system-overlay"><div class="content-box"><h2>[ ART ]</h2>- BRUTALIST MINIMALISM<br>- SMOKE BLACK PALETTE<br>- FUNCTIONAL FORM</div></div>
+    <div id="collectionBox" class="system-overlay"><div class="content-box"><h2>[ COLLECTION ]</h2>- SM-01 FUSION<br>- VC-01 HYBRID<br>- MAJAL_PERU_01</div></div>
+    <div id="designBox" class="system-overlay"><div class="content-box"><h2>[ DESIGN ]</h2>- SNEAKER ARCHITECTURE<br>- SP-404 BASS DESIGN<br>- HEAVY RECORDS_001</div></div>
 
     <button class="close-btn" id="closeBtn" onclick="closeAll()">CLOSE_SYSTEM</button>
 
