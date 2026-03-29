@@ -1,160 +1,140 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldArch - System</title>
-    
-    <script>
-        // --- 1. CONFIGURATION ---
-        const GITHUB_USER = 'YOUR_GITHUB_USERNAME'; 
-        const GITHUB_REPO = 'YOUR_REPO_NAME';
-        const IMAGES = ['fefullwaleish2.jpg', 'fullpaint2.jpg', 'fefullcrop.jpg', 'febottom.jpg', 'majalperu.jpg'];
-
-        let audio, playStopBtn, playlist = [], trackIndex = 0, isBooted = false;
-
-        // --- 2. SYSTEM LOGIC ---
-        window.bootSystem = async function() {
-            if (isBooted) return; 
-            isBooted = true;
-            
-            audio = document.getElementById('mainTrack');
-            
-            // Interaction Handshake for Audio
-            audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(e => console.log("Awaiting Interaction"));
-
-            try {
-                const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`);
-                const files = await res.json();
-                playlist = files.filter(f => f.name.toLowerCase().endsWith('.mp3')).map(f => f.download_url);
-                
-                if (playlist.length > 0) { 
-                    loadTrack(0); 
-                    document.getElementById('heavyHUD').classList.add('visible'); 
-                }
-                document.getElementById('hubLayer').style.opacity = "0.35";
-            } catch (e) { console.error("CONNECTION_ERROR"); }
-        };
-
-        window.loadTrack = function(i) {
-            if (playlist.length === 0) return;
-            trackIndex = (i + playlist.length) % playlist.length;
-            audio.src = playlist[trackIndex];
-            const name = decodeURIComponent(playlist[trackIndex].split('/').pop()).replace('.mp3', '').toUpperCase();
-            document.getElementById('trackName').innerText = `HEAVY_SYSTEM // ${name}`;
-            audio.load();
-            audio.play();
-            if (playStopBtn) playStopBtn.innerText = "STOP";
-        };
-
-        window.toggleStop = function() {
-            if (audio.paused) { audio.play(); playStopBtn.innerText = "STOP"; }
-            else { audio.pause(); audio.currentTime = 0; playStopBtn.innerText = "PLAY"; document.getElementById('progress').style.width = "0%"; }
-        };
-
-        window.changeTrack = function(d) { loadTrack(trackIndex + d); };
-
-        window.openLayer = function(id) {
-            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('closeBtn').classList.add('visible');
-            document.getElementById('hubLayer').style.opacity = "0";
-        };
-
-        window.closeAll = function() {
-            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
-            document.getElementById('closeBtn').classList.remove('visible');
-            if(isBooted) document.getElementById('hubLayer').style.opacity = "0.35";
-        };
-
-        window.onload = () => {
-            playStopBtn = document.getElementById('playStopBtn');
-            initStars(); 
-            drawStars();
-        };
-
-        let canvas, ctx, stars = [];
-        function initStars() {
-            canvas = document.getElementById('starfield');
-            ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = Array(150).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.2, v: Math.random()*0.15 }));
-        }
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.4)';
-            stars.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill(); p.y += p.v; if(p.y > canvas.height) p.y = 0; });
-            requestAnimationFrame(drawStars);
-        }
-    </script>
-
     <style>
-        body { margin: 0; overflow: hidden; background: #0a0a0a; color: #fff; font-family: 'Courier New', monospace; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .main-title { position: absolute; font-size: 8vw; opacity: 0.05; letter-spacing: -4px; z-index: 2; pointer-events: none; }
-        
-        #navSidebar { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; z-index: 1000; }
-        .nav-unit { width: 70px; height: 100px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; }
-        
-        #hubLayer { opacity: 0; transition: 1.5s; position: relative; z-index: 10; display: flex; justify-content: center; align-items: center; width: 600px; height: 600px; }
-        .shoe { position: absolute; width: 220px; opacity: 0.35; pointer-events: none; filter: grayscale(1); }
-        .orbit { animation: orbit 30s linear infinite; }
-        .delay-1 { animation-delay: -10s; } .delay-2 { animation-delay: -20s; }
-        @keyframes orbit { 0% { transform: rotate(0deg) translateX(300px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(300px) rotate(-360deg); } }
+        body {
+            margin: 0; overflow: hidden; background: #1a1a1a; 
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; color: #fff; font-family: 'Helvetica', Arial, sans-serif;
+            text-transform: uppercase;
+        }
 
-        #heavyHUD { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; opacity: 0; transition: 1s; min-width: 300px; }
-        #heavyHUD.visible { opacity: 1; }
-        .p-btn { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 9px; cursor: pointer; margin: 0 10px; letter-spacing: 2px; }
+        /* Background Starfield */
+        .starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 3s infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.98); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.5s; backdrop-filter: blur(40px); }
-        .system-overlay.active { opacity: 1; pointer-events: auto; }
-        .close-btn { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); border: 1px solid #fff; background: #000; color: #fff; padding: 15px 40px; font-size: 8px; letter-spacing: 5px; cursor: pointer; z-index: 3000; opacity: 0; transition: 0.5s; pointer-events: none; }
-        .close-btn.visible { opacity: 1; pointer-events: auto; }
+        /* Branding Watermark */
+        .brand-watermark {
+            position: absolute; display: flex; flex-direction: column; align-items: center;
+            z-index: 1; user-select: none; pointer-events: none; text-align: center;
+        }
+        .main-title { font-weight: 900; font-size: 8vw; letter-spacing: -4px; opacity: 0.2; line-height: 0.8; }
+        .sub-title { font-size: 1.1vw; letter-spacing: 10px; opacity: 0.1; margin-top: 15px; font-weight: 300; }
+
+        /* Smaller Orbiting Shoes */
+        .orbit-container { position: relative; width: 1px; height: 1px; z-index: 2; display: flex; justify-content: center; align-items: center; }
+        
+        /* SHRUNK IMAGE SIZE: 160px */
+        .shoe { position: absolute; width: 160px; height: auto; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; }
+        
+        .orbit { animation: orbit 18s linear infinite; }
+        .delay { animation-delay: -9s; }
+
+        /* TIGHTER ORBIT RADIUS: 180px */
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+        }
+        
+        /* HOVER SCALE: Stays prominent but controlled */
+        .shoe:hover { filter: brightness(1.2); transform: scale(1.3) !important; z-index: 999 !important; }
+
+        /* UI Buttons */
+        .ui-btn {
+            position: fixed; bottom: 30px; background: none; border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; padding: 10px 18px; cursor: pointer; z-index: 100; font-size: 9px; letter-spacing: 2px; transition: 0.3s;
+        }
+        .ui-btn:hover { background: #fff; color: #000; border-color: #fff; }
+        .left-btn { left: 30px; }
+        .right-btn { right: 30px; }
+
+        /* Overlays */
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.97); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .form-content { text-align: center; width: 280px; border: 1px solid #222; padding: 40px; background: #000; }
+        .form-style { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .form-style input, .form-style select, .form-style textarea {
+            background: #111; border: 1px solid #333; padding: 12px; color: #fff; font-family: inherit; font-size: 10px; text-transform: uppercase;
+        }
+        .submit-btn { background: #fff; color: #000; border: none; padding: 12px; font-weight: 900; cursor: pointer; margin-top: 5px; font-size: 10px; }
     </style>
 </head>
-<body onclick="bootSystem()">
+<body>
 
-    <canvas id="starfield"></canvas>
-    <div class="main-title">WorldArch</div>
+    <div class="starfield" id="starfield"></div>
 
-    <div id="heavyHUD">
-        <div id="trackName" style="font-size: 8px; color: rgba(255,255,255,0.4); margin-bottom: 8px;">HEAVY_SYSTEM // IDLE</div>
-        <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1);"><div id="progress" style="width: 0%; height: 100%; background: #fff;"></div></div>
-        <div style="margin-top: 15px;">
-            <button class="p-btn" onclick="changeTrack(-1)">BACK</button>
-            <button class="p-btn" id="playStopBtn" onclick="toggleStop()">STOP</button>
-            <button class="p-btn" onclick="changeTrack(1)">FORWARD</button>
-        </div>
-        <audio id="mainTrack" ontimeupdate="if(this.duration) document.getElementById('progress').style.width = (this.currentTime/this.duration*100) + '%'"></audio>
+    <div class="brand-watermark">
+        <div class="main-title">WorldArch</div>
+        <div class="sub-title">Heavy Records</div>
     </div>
 
-    <div id="navSidebar">
-        <div class="nav-unit" onclick="openLayer('aboutOverlay')"><span style="font-size: 8px; color: rgba(255,255,255,0.5);">BIO</span></div>
-        <div class="nav-unit" onclick="openLayer('contactOverlay')"><span style="font-size: 8px; color: rgba(255,255,255,0.5);">COMMS</span></div>
+    <div class="orbit-container">
+        <img src="SM-01.jpg" class="shoe orbit" alt="SM-01">
+        <img src="VC-01.jpg" class="shoe orbit delay" alt="VC-01">
     </div>
 
-    <div id="hubLayer">
-        <img src="majalperu.jpg" class="shoe orbit">
-        <img src="mafulljggng3.jpg" class="shoe orbit delay-1">
-        <img src="mafulljggng2.jpg" class="shoe orbit delay-2">
-    </div>
+    <button class="ui-btn left-btn" onclick="toggleUI('inquiryOverlay')">INQUIRY_SYSTEM</button>
+    <button class="ui-btn right-btn" onclick="toggleUI('supportOverlay')">SUPPORT_SYSTEM</button>
 
-    <div id="aboutOverlay" class="system-overlay">
-        <div style="width: 80%; max-width: 600px; text-align: left; font-size: 10px; line-height: 1.8; letter-spacing: 2px;">
-            <h2 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">MANIFESTO_001</h2>
-            <p><strong>ENTITY:</strong> IKENNA</p>
-            <p><strong>MEDIUM:</strong> CONCEPTUAL SNEAKER FUSION // HEAVY SONICS</p>
-            <p><strong>RESEARCH:</strong> TECHNICAL GARMENT CONSTRUCTION, ANATOMICAL PANELING, SP-404 BASS ENGINEERING.</p>
+    <div id="inquiryOverlay" class="overlay">
+        <div class="form-content">
+            <h2 style="font-size: 12px; letter-spacing: 4px; opacity: 0.8;">INITIATE_INQUIRY</h2>
+            <form action="https://formspree.io/f/YOUR_ID" method="POST" class="form-style">
+                <input type="text" name="name" placeholder="IDENTIFIER" autocomplete="name" required>
+                <input type="email" name="email" placeholder="EMAIL" autocomplete="email" required>
+                <select name="service">
+                    <option value="Footwear">FOOTWEAR_DESIGN</option>
+                    <option value="Audio">HEAVY_RECORDS_PROD</option>
+                </select>
+                <textarea name="message" placeholder="PROJECT_SCOPE" autocomplete="off" style="height: 60px;"></textarea>
+                <button type="submit" class="submit-btn">SUBMIT_REQUEST</button>
+            </form>
+            <p onclick="toggleUI('inquiryOverlay')" style="cursor: pointer; font-size: 9px; margin-top: 25px; opacity: 0.3; letter-spacing: 2px;">[ CLOSE_SESSION ]</p>
         </div>
     </div>
 
-    <div id="contactOverlay" class="system-overlay">
-        <div style="width: 80%; max-width: 600px; text-align: left;">
-            <h2>COMMS_PROTOCOL</h2>
-            <p>EMAIL: CONTACT@WORLDARCH.SYSTEM</p>
+    <div id="supportOverlay" class="overlay">
+        <div class="form-content">
+            <h2 style="font-size: 12px; letter-spacing: 4px; opacity: 0.8;">SUPPORT_SYSTEM</h2>
+            <form action="https://formspree.io/f/YOUR_ID" method="POST" class="form-style">
+                <input type="text" name="name" placeholder="IDENTIFIER" autocomplete="name" required>
+                <input type="email" name="email" placeholder="EMAIL" autocomplete="email" required>
+                <select name="asset">
+                    <option value="ETH">ETHEREUM (ETH)</option>
+                    <option value="BTC">BITCOIN (BTC)</option>
+                </select>
+                <button type="submit" class="submit-btn">REQUEST_ROUTING</button>
+            </form>
+            <p onclick="toggleUI('supportOverlay')" style="cursor: pointer; font-size: 9px; margin-top: 25px; opacity: 0.3; letter-spacing: 2px;">[ CLOSE_SESSION ]</p>
         </div>
     </div>
 
-    <button class="close-btn" id="closeBtn" onclick="closeAll()">CLOSE_SYSTEM</button>
+    <script>
+        // Starfield Init
+        const starfield = document.getElementById('starfield');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starfield.appendChild(star);
+        }
 
+        // Global UI Toggle
+        function toggleUI(id) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+        }
+    </script>
 </body>
 </html>
