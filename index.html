@@ -117,7 +117,7 @@
             <button class="p-btn" id="playStopBtn" onclick="toggleStop()">PLAY</button>
             <button class="p-btn" onclick="changeTrack(1)">FWD</button>
         </div>
-        <audio id="mainTrack"></audio>
+        <audio id="mainTrack" onended="changeTrack(1)"></audio>
     </div>
 
     <div id="navSidebar">
