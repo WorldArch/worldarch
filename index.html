@@ -1,31 +1,41 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WorldArch - System</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;900&display=swap" rel="stylesheet">
+    
     <script>
         let audio, playStopBtn, playlist = [], trackIndex = 0, isBooted = false;
+        let gameInterval, gameActive = false;
+        const width = 24;
+        let player = { x: 12, y: 8 };
+        let frameCount = 0;
+
+        // SYSTEM_BUS ENGINE DATA
+        const rows = [
+            { type: 'goal',    content: '  [ ACCESS_GRANTED ]  ', speed: 0,   color: 's' },
+            { type: 'stream',  content: ' [====]     [====] ',  speed: 1,   color: 's', pos: 0 },
+            { type: 'stream',  content: '    [=======]      ',  speed: -2,  color: 's', pos: 5 },
+            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
+            { type: 'hazard',  content: '  << ERR_404 <<    ',  speed: 3,   color: 'h', pos: 0 },
+            { type: 'hazard',  content: '  KILL_PROC >>     ',  speed: -2,  color: 'h', pos: 4 },
+            { type: 'hazard',  content: '  OVERFLOW <<      ',  speed: 4,   color: 'h', pos: 10 },
+            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
+            { type: 'start',   content: '     [ USER_ROOT ]     ', speed: 0,   color: 'white' }
+        ];
 
         window.bootSystem = async function() {
             if (isBooted) return; 
             isBooted = true;
-            
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const audioCtx = new AudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
             audio = document.getElementById('mainTrack');
-            
-            // RELATIVE PATHS
-            playlist = [
-                "Bubbles.mp3",
-                "soul%20breaks.mp3",
-                "iano%20choppers.mp3",
-                "ty%20who%202%20(Mashup).mp3",
-                "(Instrumental).mp3"
-            ];
+            playlist = ["Bubbles.mp3", "soul%20breaks.mp3", "iano%20choppers.mp3", "ty%20who%202%20(Mashup).mp3", "(Instrumental).mp3"];
 
             if (playlist.length > 0) { 
                 loadTrack(0); 
@@ -55,11 +65,54 @@
         window.openLayer = function(id) {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            // Check if the opened layer contains the game terminal
+            if(id === 'characterBox') { 
+                gameActive = true; 
+                player = { x: 12, y: 8 }; 
+                initGame(); 
+            }
         };
 
         window.closeAll = function() {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
+            gameActive = false;
+            clearInterval(gameInterval);
         };
+
+        function initGame() {
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                if(!gameActive) return;
+                frameCount++;
+                let display = "";
+                for (let y = 0; y < rows.length; y++) {
+                    let row = rows[y];
+                    let lineArr = new Array(width).fill(' ');
+                    if (row.speed !== 0 && frameCount % 4 === 0) { row.pos = (row.pos + row.speed + (width * 10)) % width; }
+                    for (let i = 0; i < row.content.length; i++) { 
+                        let charPos = (row.pos + i) % width; 
+                        lineArr[charPos] = row.content[i]; 
+                    }
+                    if (player.y === y) {
+                        if (row.type === 'hazard' && lineArr[player.x] !== ' ') player = {x: 12, y: 8};
+                        if (row.type === 'stream' && lineArr[player.x] === ' ') player = {x: 12, y: 8};
+                        lineArr[player.x] = '█'; 
+                        display += `<span class="p">${lineArr.join('')}</span>\n`;
+                    } else { display += `<span class="${row.color}">${lineArr.join('')}</span>\n`; }
+                }
+                document.getElementById('gameCanvas').innerHTML = display;
+                if (player.y === 0) { player = {x: 12, y: 8}; }
+            }, 50);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if(!gameActive) return;
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
+            if (e.key === 'ArrowUp' && player.y > 0) player.y--;
+            if (e.key === 'ArrowDown' && player.y < 8) player.y++;
+            if (e.key === 'ArrowLeft' && player.x > 0) player.x--;
+            if (e.key === 'ArrowRight' && player.x < width - 1) player.x++;
+        });
 
         window.onload = () => {
             playStopBtn = document.getElementById('playStopBtn');
@@ -77,12 +130,12 @@
     </script>
 
     <style>
-        body { margin: 0; overflow: hidden; background: #080808; color: #fff; font-family: 'Helvetica', Arial, sans-serif; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; cursor: crosshair; }
+        body { margin: 0; overflow: hidden; background: #080808; color: #fff; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; cursor: crosshair; }
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
         #heavyHUD { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 3000; text-align: center; opacity: 0; transition: 1s; min-width: 300px; }
         #heavyHUD.visible { opacity: 1; }
-        .p-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 10px; cursor: pointer; margin: 0 12px; letter-spacing: 4px; font-weight: 900; }
+        .p-btn { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 10px; cursor: pointer; margin: 0 12px; letter-spacing: 4px; font-weight: 900; font-family: inherit; }
         .p-btn:hover { color: #fff; }
 
         #navSidebar { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 500; }
@@ -91,14 +144,19 @@
 
         .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8,8,8,0.98); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(30px); }
         .system-overlay.active { opacity: 1; pointer-events: auto; }
-        .content-box { width: 85%; max-width: 500px; text-align: left; line-height: 2.6; font-size: 11px; letter-spacing: 4px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; pointer-events: none; }
+        .content-box { width: 85%; max-width: 500px; text-align: left; line-height: 2.6; font-size: 11px; letter-spacing: 4px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; }
         
-        #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; display: flex; justify-content: center; align-items: center; width: 500px; height: 500px; pointer-events: none; }
-        
-        /* CENTER WATERMARK STYLING */
+        /* GAME TERMINAL STYLING */
+        #gameCanvas { font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 1.0; white-space: pre; background: #000; padding: 20px; border: 1px solid rgba(255,255,255,0.1); display: inline-block; letter-spacing: 0px; margin-top: 20px; }
+        .p { color: #55FF55; font-weight: bold; } /* Player */
+        .h { color: #FF55FF; }                   /* Hazards */
+        .s { color: #55FFFF; }                   /* Streams */
+        .n { color: #333; }                      /* Grid */
+
         .brand-watermark { position: absolute; text-align: center; z-index: 2; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .main-title { font-weight: 900; font-size: 11vw; opacity: 0.06; letter-spacing: -7px; line-height: 0.8; }
         .ig-handle { font-size: 10px; letter-spacing: 8px; opacity: 0.15; margin-top: 15px; font-weight: 900; }
+        #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; width: 500px; height: 500px; pointer-events: none; }
     </style>
 </head>
 <body onclick="bootSystem()">
@@ -121,20 +179,28 @@
     </div>
 
     <div id="navSidebar">
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('characterBox')">CHARACTER_01</div>
         <div class="nav-unit" onclick="event.stopPropagation(); openLayer('fashionBox')">FASHION</div>
         <div class="nav-unit" onclick="event.stopPropagation(); openLayer('artBox')">ART</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('collectionBox')">COLLECTION</div>
         <div class="nav-unit" onclick="event.stopPropagation(); openLayer('designBox')">DESIGN</div>
         <div class="nav-unit" onclick="event.stopPropagation(); openLayer('musicBox')">MUSIC</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('travelBox')">TRAVEL</div>
+    </div>
+
+    <div id="characterBox" class="system-overlay" onclick="closeAll()">
+        <div class="content-box" style="text-align: center; border: none; padding: 0;">
+            <h2 style="letter-spacing: 10px;">[ SUBJECT_01 ]</h2>
+            <p style="font-size: 9px; line-height: 1.8; margin-bottom: 0;">BIO-TPU REINFORCEMENT // SYSTEM ACCESS REQUIRED</p>
+            
+            <div id="gameCanvas"></div>
+            
+            <p style="font-size: 7px; opacity: 0.4; margin-top: 15px; letter-spacing: 2px;">BYPASS DATA STREAMS TO ESTABLISH LINK</p>
+        </div>
     </div>
 
     <div id="fashionBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ FASHION ]</h2>TECHNICAL OUTERWEAR<br>ANATOMICAL PANELING</div></div>
-    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY</div></div>
-    <div id="collectionBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ COLLECTION ]</h2>PAINTINGS<br>FIGURES/STATUES<br></div></div>
-    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE<br>DESIGN CONCEPTS<br>SAMPLE CLOTHING<br>CUSTOM/BESPOKE</div></div>
-    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2>HEAVY RECORDS<br>SP-404 BASS ENGINEERING<br>SAMPLE KITS<br>HARDWARE</div></div>
-    <div id="travelBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ TRAVEL ]</h2>MSP > TYO VECTOR<br>GLOBAL KINETICS</div></div>
+    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY<br>BEATS<br>PAINTINGS<br>SKETCHES</div></div>
+    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE</div></div>
+    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2>HEAVY RECORDS<br>SP-404 BASS ENGINEERING</div></div>
 
     <div id="hubLayer"></div>
 
