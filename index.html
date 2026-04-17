@@ -154,6 +154,19 @@
         .main-title { font-weight: 900; font-size: 11vw; opacity: 0.06; letter-spacing: -7px; line-height: 0.8; }
         .ig-handle { font-size: 10px; letter-spacing: 8px; opacity: 0.15; margin-top: 15px; font-weight: 900; }
         #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; width: 500px; height: 500px; pointer-events: none; }
+        /* ARCHIVE GRID STYLES */
+#fashion-dump {
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.fashion-card { background: #000; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+.fashion-card img { width: 100%; height: auto; display: block; filter: grayscale(100%); transition: 0.4s; }
+.fashion-card:hover img { filter: grayscale(0%); }
+.session-label { font-size: 8px; padding: 5px; color: #666; letter-spacing: 1px; }
     </style>
 </head>
 <body onclick="bootSystem()">
@@ -192,8 +205,10 @@
         </div>
     </div>
 
-    <div id="fashionBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ FASHION ]</h2>TECHNICAL OUTERWEAR<br>ANATOMICAL PANELING SCREEN PRINTS </div></div>
-    
+    <div id="fashionBox" class="system-overlay" onclick="closeAll()"><div class="content-box" style="max-width: 800px;"><h2 style="text-align: center;">[ FASHION_ARCHIVE ]</h2><div id="fashion-dump">
+            </div>
+    </div>
+</div>
     <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY<br>BEATS<br>PAINTINGS<br>SKETCHES<br>CURRENT PROJECTS </div></div>
     
     <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE</div></div>
