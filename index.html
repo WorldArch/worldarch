@@ -7,151 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;900&display=swap" rel="stylesheet">
     
-    <script>
-        let audio, playStopBtn, playlist = [], trackIndex = 0, isBooted = false;
-        let gameInterval, gameActive = false;
-        const width = 24;
-        let player = { x: 12, y: 8 };
-        let frameCount = 0;
-
-        const rows = [
-            { type: 'goal',    content: '  [ ACCESS_GRANTED ]  ', speed: 0,   color: 's' },
-            { type: 'stream',  content: ' [====]     [====] ',  speed: 1,   color: 's', pos: 0 },
-            { type: 'stream',  content: '    [=======]      ',  speed: -2,  color: 's', pos: 5 },
-            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
-            { type: 'hazard',  content: '  << ERR_404 <<    ',  speed: 3,   color: 'h', pos: 0 },
-            { type: 'hazard',  content: '  KILL_PROC >>     ',  speed: -2,  color: 'h', pos: 4 },
-            { type: 'hazard',  content: '  OVERFLOW <<      ',  speed: 4,   color: 'h', pos: 10 },
-            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
-            { type: 'start',   content: '      [ USER_ROOT ]      ', speed: 0,   color: 'white' }
-        ];
-
-        window.bootSystem = async function() {
-            if (isBooted) return; 
-            isBooted = true;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const audioCtx = new AudioContext();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            audio = document.getElementById('mainTrack');
-            playlist = ["Bubbles.mp3", "soul%20breaks.mp3", "iano%20choppers.mp3", "ty%20who%202%20(Mashup).mp3", "(Instrumental).mp3"];
-
-            if (playlist.length > 0) { 
-                loadTrack(0); 
-                document.getElementById('heavyHUD').classList.add('visible'); 
-            }
-            document.getElementById('hubLayer').style.opacity = "0.45";
-        };
-
-        window.loadTrack = function(i) {
-            if (playlist.length === 0) return;
-            trackIndex = (i + playlist.length) % playlist.length;
-            audio.src = playlist[trackIndex];
-            const name = decodeURIComponent(playlist[trackIndex]).replace('.mp3', '').toUpperCase();
-            document.getElementById('trackName').innerText = `SYSTEM // ${name}`;
-            audio.load();
-            audio.play().catch(e => console.log("Unlock required"));
-            playStopBtn.innerText = "STOP";
-        };
-
-        window.toggleStop = function() {
-            if (audio.paused) { audio.play(); playStopBtn.innerText = "STOP"; } 
-            else { audio.pause(); audio.currentTime = 0; playStopBtn.innerText = "PLAY"; }
-        };
-
-        window.changeTrack = function(d) { loadTrack(trackIndex + d); };
-
-        window.openLayer = function(id) {
-            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            
-            if(id === 'characterBox') { 
-                gameActive = true; 
-                player = { x: 12, y: 8 }; 
-                initGame(); 
-            }
-            
-            if(id === 'fashionBox') { 
-                loadFashion(); 
-            }
-        };
-
-        window.closeAll = function() {
-            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
-            gameActive = false;
-            if(gameInterval) clearInterval(gameInterval);
-        };
-
-        async function loadFashion() {
-            const grid = document.getElementById('fashion-dump');
-            if (grid.children.length > 0) return; 
-            try {
-                const response = await fetch('./fashion.json');
-                const data = await response.json();
-                data.images.forEach(img => {
-                    const card = document.createElement('div');
-                    card.className = 'fashion-card';
-                    card.innerHTML = `
-                        <img src="${img.url}" alt="Archive">
-                        <div class="session-label">${img.label || 'WORLDARCH // LOG'}</div>
-                    `;
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                console.error("DATA_LOAD_ERROR: Check fashion.json path.");
-            }
-        }
-
-        function initGame() {
-            if (gameInterval) clearInterval(gameInterval);
-            gameInterval = setInterval(() => {
-                if(!gameActive) return;
-                frameCount++;
-                let display = "";
-                for (let y = 0; y < rows.length; y++) {
-                    let row = rows[y];
-                    let lineArr = new Array(width).fill(' ');
-                    if (row.speed !== 0 && frameCount % 4 === 0) { row.pos = (row.pos + row.speed + (width * 10)) % width; }
-                    for (let i = 0; i < row.content.length; i++) { 
-                        let charPos = (row.pos + i) % width; 
-                        lineArr[charPos] = row.content[i]; 
-                    }
-                    if (player.y === y) {
-                        if (row.type === 'hazard' && lineArr[player.x] !== ' ') player = {x: 12, y: 8};
-                        if (row.type === 'stream' && lineArr[player.x] === ' ') player = {x: 12, y: 8};
-                        lineArr[player.x] = '█'; 
-                        display += `<span class="p">${lineArr.join('')}</span>\n`;
-                    } else { display += `<span class="${row.color}">${lineArr.join('')}</span>\n`; }
-                }
-                document.getElementById('gameCanvas').innerHTML = display;
-                if (player.y === 0) { player = {x: 12, y: 8}; }
-            }, 50);
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if(!gameActive) return;
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
-            if (e.key === 'ArrowUp' && player.y > 0) player.y--;
-            if (e.key === 'ArrowDown' && player.y < 8) player.y++;
-            if (e.key === 'ArrowLeft' && player.x > 0) player.x--;
-            if (e.key === 'ArrowRight' && player.x < width - 1) player.x++;
-        });
-
-        window.onload = () => {
-            playStopBtn = document.getElementById('playStopBtn');
-            const canvas = document.getElementById('starfield');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            let stars = Array(180).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.2, v: Math.random()*0.15 }));
-            function draw() {
-                ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                stars.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill(); p.y += p.v; if(p.y > canvas.height) p.y = 0; });
-                requestAnimationFrame(draw);
-            }
-            draw();
-        };
-    </script>
-
     <style>
         body { margin: 0; overflow: hidden; background: #080808; color: #fff; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; user-select: none; display: flex; justify-content: center; align-items: center; height: 100vh; cursor: crosshair; }
         canvas#starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
@@ -165,8 +20,8 @@
         .nav-unit { width: 140px; height: 35px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: 3px; color: rgba(255,255,255,0.4); transition: 0.2s; }
         .nav-unit:hover { border-color: #fff; color: #000; background: #fff; }
 
-        .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8,8,8,0.98); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(30px); }
-        .system-overlay.active { opacity: 1; pointer-events: auto; }
+        .system-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8,8,8,0.98); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(30px); }
+        .system-overlay.active { display: flex; opacity: 1; pointer-events: auto; }
         .content-box { width: 85%; max-width: 500px; text-align: left; line-height: 2.6; font-size: 11px; letter-spacing: 4px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 30px; }
         
         #gameCanvas { font-family: 'IBM Plex Mono', monospace; font-size: 14px; line-height: 1.0; white-space: pre; background: #000; padding: 20px; border: 1px solid rgba(255,255,255,0.1); display: inline-block; letter-spacing: 0px; margin-top: 20px; }
@@ -178,16 +33,8 @@
         .brand-watermark { position: absolute; text-align: center; z-index: 2; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .main-title { font-weight: 900; font-size: 11vw; opacity: 0.06; letter-spacing: -7px; line-height: 0.8; }
         .ig-handle { font-size: 10px; letter-spacing: 8px; opacity: 0.15; margin-top: 15px; font-weight: 900; }
-        #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; width: 500px; height: 500px; pointer-events: none; }
 
-        #fashion-dump {
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; 
-            padding: 20px 0;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
+        #fashion-dump { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px 0; max-height: 70vh; overflow-y: auto; }
         .fashion-card { background: #000; border: 1px solid rgba(255,255,255,0.1); position: relative; }
         .fashion-card img { width: 100%; height: auto; display: block; filter: grayscale(100%); transition: 0.4s; }
         .fashion-card:hover img { filter: grayscale(0%); }
@@ -237,12 +84,126 @@
         </div>
     </div>
 
-    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY<br>BEATS<br>PAINTINGS<br>SKETCHES<br>CURRENT PROJECTS </div></div>
-    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE</div></div>
-    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2>HEAVY RECORDS<br>SP-404 BASS ENGINEERING<br>HEAVY ROTATION BEAT SHOWCASE & PERFORMANCES</div></div>
+    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2><p>BRUTALIST MINIMALISM</p><p>INDUSTRIAL UTILITY</p><p>BEATS</p><p>PAINTINGS</p></div></div>
+    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2><p>ZERO-CLICK WEB ARCH</p><p>SNEAKER ARCHITECTURE</p></div></div>
+    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2><p>IT HEAVY RECORDS</p><p>SP-404 BASS ENGINEERING</p></div></div>
 
-    <div id="hubLayer"></div>
+    <script>
+        let audio, playlist = [], trackIndex = 0, isBooted = false;
+        let gameInterval, gameActive = false;
+        const width = 24;
+        let player = { x: 12, y: 8 };
+        let frameCount = 0;
 
+        const rows = [
+            { type: 'goal',    content: '  [ ACCESS_GRANTED ]  ', speed: 0,   color: 's' },
+            { type: 'stream',  content: ' [====]     [====] ',  speed: 1,   color: 's', pos: 0 },
+            { type: 'stream',  content: '    [=======]      ',  speed: -2,  color: 's', pos: 5 },
+            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
+            { type: 'hazard',  content: '  << ERR_404 <<    ',  speed: 3,   color: 'h', pos: 0 },
+            { type: 'hazard',  content: '  KILL_PROC >>     ',  speed: -2,  color: 'h', pos: 4 },
+            { type: 'hazard',  content: '  OVERFLOW <<      ',  speed: 4,   color: 'h', pos: 10 },
+            { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
+            { type: 'start',   content: '      [ USER_ROOT ]      ', speed: 0,   color: 'white' }
+        ];
+
+        window.bootSystem = async function() {
+            if (isBooted) return; 
+            isBooted = true;
+            audio = document.getElementById('mainTrack');
+            playlist = ["Bubbles.mp3", "soul%20breaks.mp3", "iano%20choppers.mp3", "ty%20who%202%20(Mashup).mp3", "(Instrumental).mp3"];
+            if (playlist.length > 0) { loadTrack(0); document.getElementById('heavyHUD').classList.add('visible'); }
+        };
+
+        window.loadTrack = function(i) {
+            trackIndex = (i + playlist.length) % playlist.length;
+            audio.src = playlist[trackIndex];
+            const name = decodeURIComponent(playlist[trackIndex]).replace('.mp3', '').toUpperCase();
+            document.getElementById('trackName').innerText = `SYSTEM // ${name}`;
+            audio.play().catch(() => {});
+            document.getElementById('playStopBtn').innerText = "STOP";
+        };
+
+        window.toggleStop = function() {
+            if (audio.paused) { audio.play(); document.getElementById('playStopBtn').innerText = "STOP"; } 
+            else { audio.pause(); document.getElementById('playStopBtn').innerText = "PLAY"; }
+        };
+
+        window.changeTrack = function(d) { loadTrack(trackIndex + d); };
+
+        window.openLayer = function(id) {
+            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(id);
+            target.classList.add('active');
+            if(id === 'characterBox') { gameActive = true; player = { x: 12, y: 8 }; initGame(); }
+            if(id === 'fashionBox') loadFashion();
+        };
+
+        window.closeAll = function() {
+            document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
+            gameActive = false;
+            clearInterval(gameInterval);
+        };
+
+        async function loadFashion() {
+            const grid = document.getElementById('fashion-dump');
+            if (grid.children.length > 0) return; 
+            try {
+                const res = await fetch('./fashion.json');
+                const data = await res.json();
+                data.images.forEach(img => {
+                    const card = document.createElement('div');
+                    card.className = 'fashion-card';
+                    card.innerHTML = `<img src="${img.url}"><div class="session-label">${img.label}</div>`;
+                    grid.appendChild(card);
+                });
+            } catch (e) { console.error("LOAD_FAIL"); }
+        }
+
+        function initGame() {
+            clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                if(!gameActive) return;
+                frameCount++;
+                let display = "";
+                for (let y = 0; y < rows.length; y++) {
+                    let row = rows[y];
+                    let lineArr = new Array(width).fill(' ');
+                    if (row.speed !== 0 && frameCount % 4 === 0) row.pos = (row.pos + row.speed + (width * 10)) % width;
+                    for (let i = 0; i < row.content.length; i++) { 
+                        let charPos = (row.pos + i) % width; lineArr[charPos] = row.content[i]; 
+                    }
+                    if (player.y === y) {
+                        if ((row.type === 'hazard' && lineArr[player.x] !== ' ') || (row.type === 'stream' && lineArr[player.x] === ' ')) player = {x: 12, y: 8};
+                        lineArr[player.x] = '█'; 
+                        display += `<span class="p">${lineArr.join('')}</span>\n`;
+                    } else display += `<span class="${row.color}">${lineArr.join('')}</span>\n`;
+                }
+                document.getElementById('gameCanvas').innerHTML = display;
+                if (player.y === 0) player = {x: 12, y: 8};
+            }, 50);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if(!gameActive) return;
+            if (e.key === 'ArrowUp' && player.y > 0) player.y--;
+            if (e.key === 'ArrowDown' && player.y < 8) player.y++;
+            if (e.key === 'ArrowLeft' && player.x > 0) player.x--;
+            if (e.key === 'ArrowRight' && player.x < width - 1) player.x++;
+        });
+
+        window.onload = () => {
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            let stars = Array(150).fill().map(() => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.15 }));
+            function draw() {
+                ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                stars.forEach(p => { ctx.fillRect(p.x, p.y, 1, 1); p.y += p.v; if(p.y > canvas.height) p.y = 0; });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        };
+    </script>
 </body>
 </html>
-
