@@ -23,7 +23,7 @@
             { type: 'hazard',  content: '  KILL_PROC >>     ',  speed: -2,  color: 'h', pos: 4 },
             { type: 'hazard',  content: '  OVERFLOW <<      ',  speed: 4,   color: 'h', pos: 10 },
             { type: 'neutral', content: '------------------------', speed: 0,   color: 'n' },
-            { type: 'start',   content: '     [ USER_ROOT ]     ', speed: 0,   color: 'white' }
+            { type: 'start',   content: '      [ USER_ROOT ]      ', speed: 0,   color: 'white' }
         ];
 
         window.bootSystem = async function() {
@@ -64,18 +64,43 @@
         window.openLayer = function(id) {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
             if(id === 'characterBox') { 
                 gameActive = true; 
                 player = { x: 12, y: 8 }; 
                 initGame(); 
+            }
+            
+            if(id === 'fashionBox') { 
+                loadFashion(); 
             }
         };
 
         window.closeAll = function() {
             document.querySelectorAll('.system-overlay').forEach(el => el.classList.remove('active'));
             gameActive = false;
-            clearInterval(gameInterval);
+            if(gameInterval) clearInterval(gameInterval);
         };
+
+        async function loadFashion() {
+            const grid = document.getElementById('fashion-dump');
+            if (grid.children.length > 0) return; 
+            try {
+                const response = await fetch('./fashion.json');
+                const data = await response.json();
+                data.images.forEach(img => {
+                    const card = document.createElement('div');
+                    card.className = 'fashion-card';
+                    card.innerHTML = `
+                        <img src="${img.url}" alt="Archive">
+                        <div class="session-label">${img.label || 'WORLDARCH // LOG'}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("DATA_LOAD_ERROR: Check fashion.json path.");
+            }
+        }
 
         function initGame() {
             if (gameInterval) clearInterval(gameInterval);
@@ -154,19 +179,19 @@
         .main-title { font-weight: 900; font-size: 11vw; opacity: 0.06; letter-spacing: -7px; line-height: 0.8; }
         .ig-handle { font-size: 10px; letter-spacing: 8px; opacity: 0.15; margin-top: 15px; font-weight: 900; }
         #hubLayer { opacity: 0; transition: 2s; position: relative; z-index: 10; width: 500px; height: 500px; pointer-events: none; }
-        /* ARCHIVE GRID STYLES */
-#fashion-dump {
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 10px; 
-    padding: 20px;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-.fashion-card { background: #000; border: 1px solid rgba(255,255,255,0.1); position: relative; }
-.fashion-card img { width: 100%; height: auto; display: block; filter: grayscale(100%); transition: 0.4s; }
-.fashion-card:hover img { filter: grayscale(0%); }
-.session-label { font-size: 8px; padding: 5px; color: #666; letter-spacing: 1px; }
+
+        #fashion-dump {
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 20px 0;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .fashion-card { background: #000; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .fashion-card img { width: 100%; height: auto; display: block; filter: grayscale(100%); transition: 0.4s; }
+        .fashion-card:hover img { filter: grayscale(0%); }
+        .session-label { font-size: 8px; padding: 8px; color: #666; letter-spacing: 1px; }
     </style>
 </head>
 <body onclick="bootSystem()">
@@ -183,38 +208,3 @@
         <div style="margin-top: 20px;">
             <button class="p-btn" onclick="changeTrack(-1)">REW</button>
             <button class="p-btn" id="playStopBtn" onclick="toggleStop()">PLAY</button>
-            <button class="p-btn" onclick="changeTrack(1)">FWD</button>
-        </div>
-        <audio id="mainTrack" onended="changeTrack(1)"></audio>
-    </div>
-
-    <div id="navSidebar">
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('characterBox')">CHARACTER_01</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('fashionBox')">FASHION</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('artBox')">ART</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('designBox')">DESIGN</div>
-        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('musicBox')">MUSIC</div>
-    </div>
-
-    <div id="characterBox" class="system-overlay" onclick="closeAll()">
-        <div class="content-box" style="text-align: center; border: none; padding: 0;">
-            <h2 style="letter-spacing: 10px;">[ SUBJECT_01 ]</h2>
-            <p style="font-size: 9px; line-height: 1.8; margin-bottom: 0;">BIO-TPU REINFORCEMENT // SYSTEM ACCESS REQUIRED</p>
-            <div id="gameCanvas"></div>
-            <p style="font-size: 7px; opacity: 0.4; margin-top: 15px; letter-spacing: 2px;">BYPASS DATA STREAMS TO ESTABLISH LINK</p>
-        </div>
-    </div>
-
-    <div id="fashionBox" class="system-overlay" onclick="closeAll()"><div class="content-box" style="max-width: 800px;"><h2 style="text-align: center;">[ FASHION_ARCHIVE ]</h2><div id="fashion-dump">
-            </div>
-    </div>
-</div>
-    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY<br>BEATS<br>PAINTINGS<br>SKETCHES<br>CURRENT PROJECTS </div></div>
-    
-    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE</div></div>
-    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2>HEAVY RECORDS<br>SP-404 BASS ENGINEERING<br>HEAVY ROTATION BEAT SHOWCASE & PERFORMANCES</div></div>
-
-    <div id="hubLayer"></div>
-
-</body>
-</html>
