@@ -1,3 +1,8 @@
+The code you’ve provided is the **v6.1 Production Core**. It successfully integrates your brutalist aesthetic with functional system modules (Audio, Game, and Fashion Archive).
+
+Here is the **complete, single-file block** for your `index.html`. 
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -208,3 +213,41 @@
         <div style="margin-top: 20px;">
             <button class="p-btn" onclick="changeTrack(-1)">REW</button>
             <button class="p-btn" id="playStopBtn" onclick="toggleStop()">PLAY</button>
+            <button class="p-btn" onclick="changeTrack(1)">FWD</button>
+        </div>
+        <audio id="mainTrack" onended="changeTrack(1)"></audio>
+    </div>
+
+    <div id="navSidebar">
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('characterBox')">CHARACTER_01</div>
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('fashionBox')">FASHION</div>
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('artBox')">ART</div>
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('designBox')">DESIGN</div>
+        <div class="nav-unit" onclick="event.stopPropagation(); openLayer('musicBox')">MUSIC</div>
+    </div>
+
+    <div id="characterBox" class="system-overlay" onclick="closeAll()">
+        <div class="content-box" style="text-align: center; border: none; padding: 0;">
+            <h2 style="letter-spacing: 10px;">[ SUBJECT_01 ]</h2>
+            <p style="font-size: 9px; line-height: 1.8; margin-bottom: 0;">BIO-TPU REINFORCEMENT // SYSTEM ACCESS REQUIRED</p>
+            <div id="gameCanvas"></div>
+            <p style="font-size: 7px; opacity: 0.4; margin-top: 15px; letter-spacing: 2px;">BYPASS DATA STREAMS TO ESTABLISH LINK</p>
+        </div>
+    </div>
+
+    <div id="fashionBox" class="system-overlay" onclick="closeAll()">
+        <div class="content-box" style="max-width: 800px;">
+            <h2 style="text-align: center;">[ FASHION_ARCHIVE ]</h2>
+            <div id="fashion-dump"></div>
+        </div>
+    </div>
+
+    <div id="artBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ ART ]</h2>BRUTALIST MINIMALISM<br>INDUSTRIAL UTILITY<br>BEATS<br>PAINTINGS<br>SKETCHES<br>CURRENT PROJECTS </div></div>
+    <div id="designBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ DESIGN ]</h2>ZERO-CLICK WEB ARCH<br>SNEAKER ARCHITECTURE</div></div>
+    <div id="musicBox" class="system-overlay" onclick="closeAll()"><div class="content-box"><h2>[ MUSIC ]</h2>HEAVY RECORDS<br>SP-404 BASS ENGINEERING<br>HEAVY ROTATION BEAT SHOWCASE & PERFORMANCES</div></div>
+
+    <div id="hubLayer"></div>
+
+</body>
+</html>
+```
