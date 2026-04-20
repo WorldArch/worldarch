@@ -1,12 +1,1 @@
-{
-  "images": [
-    {
-      "url": "images/fashion/topographsetfem.png",
-      "label": "SESSION_01 // SAMPLE_V1"
-    },
-    {
-      "url": "images/fashion/splatcargofem.png",
-      "label": "SESSION_01 // LOOK_02"
-    }
-  ]
-}
+{"images":[{"url":"images/fashion/topographsetfem.png","label":"SESSION_01 // SAMPLE_V1"},{"url":"images/fashion/splatcargofem.png","label":"SESSION_01 // LOOK_02"},{"url":"images/fashion/fefullcrop.jpg","label":"SESSION_02 // FULL_CROP"},{"url":"images/fashion/fefullwaleish.jpg","label":"SESSION_02 // WALEISH_V1"},{"url":"images/fashion/fefullwaleish2.jpg","label":"SESSION_02 // WALEISH_V2"},{"url":"images/fashion/febottom.jpg","label":"SESSION_02 // DETAIL"},{"url":"images/art/fullpaint.jpg","label":"PAINTINGS // FULL_01"},{"url":"images/art/fullpaint2.jpg","label":"PAINTINGS // FULL_02"},{"url":"images/art/mafulljggng.jpg","label":"BRUTALISM // TEXTURE_01"},{"url":"images/art/mafulljggng2.jpg","label":"BRUTALISM // TEXTURE_02"},{"url":"images/art/majalperu.jpg","label":"TRAVELS // PERU"},{"url":"images/design/AR-01.jpg","label":"ARCHITECTURE // AR_01"},{"url":"images/design/VC-01.jpg","label":"DESIGN // VC_01"},{"url":"images/design/SM-01.jpg","label":"DESIGN // SM_01"},{"url":"images/design/Gemini_G1.jpg","label":"AI_GENERATED // G1"},{"url":"images/design/Gemini_G3.png","label":"AI_GENERATED // G3"},{"url":"images/design/Gemini_G4.png","label":"AI_GENERATED // G4"},{"url":"images/design/Gemini_Generated_Image_gk8a6kgk8a6kgk8a.png","label":"AI_GENERATED // GEMINI_01"},{"url":"images/design/Gemini_Generated_Image_s2mvjps2mvjps2mv.png","label":"AI_GENERATED // GEMINI_02"}]}
