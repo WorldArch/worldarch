@@ -39,6 +39,61 @@
         .fashion-card img { width: 100%; height: auto; display: block; filter: grayscale(100%); transition: 0.4s; }
         .fashion-card:hover img { filter: grayscale(0%); }
         .session-label { font-size: 8px; padding: 8px; color: #666; letter-spacing: 1px; }
+
+        /* Container to keep everything on one screen */
+.matrix-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    height: 100%;
+    padding-top: 10px;
+}
+
+/* Technical Card Setup */
+.matrix-item {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #000;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    cursor: crosshair;
+}
+
+.matrix-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(100%) contrast(1.2);
+    transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+/* The "Wave" Expansion Effect */
+.matrix-item:hover {
+    border-color: #fff;
+    z-index: 100;
+    transform: scale(1.05); /* Expands toward the user */
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+.matrix-item:hover img {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.1); /* Slight internal zoom */
+}
+
+.matrix-label {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 7px;
+    color: #fff;
+    background: rgba(0,0,0,0.7);
+    padding: 2px 5px;
+    letter-spacing: 2px;
+    z-index: 5;
+    pointer-events: none;
+}
+        
     </style>
 </head>
 <body onclick="bootSystem()">
