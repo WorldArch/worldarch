@@ -185,7 +185,7 @@
             } catch (e) { console.error("LOAD_FAIL"); }
         }
 
-        function initGame() {
+                function initGame() {
             clearInterval(gameInterval);
             gameInterval = setInterval(() => {
                 if(!gameActive) return;
@@ -224,6 +224,7 @@
             if (e.key === 'ArrowLeft' && player.x > 0) player.x--;
             if (e.key === 'ArrowRight' && player.x < width - 1) player.x++;
         });
+
 
         window.onload = () => {
             const canvas = document.getElementById('starfield');
